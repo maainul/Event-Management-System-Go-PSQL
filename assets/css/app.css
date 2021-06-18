@@ -1,0 +1,15 @@
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
+
+module.exports = {
+    plugins: [
+    // ...
+    require('tailwindcss'),
+    require('autoprefixer'),
+    // ...
+    ]
+}
+    

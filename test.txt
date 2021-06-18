@@ -1,0 +1,29 @@
+migration cmd :
+
+go run migrations/migrate.go up
+
+
+1. migrate :
+
+    go run migrations/migrate.go down
+    go run migrations/migrate.go up
+    go run migrations/migrate.go status
+    go run migrations/migrate.go version
+    go run migrations/migrate.go create aritcles sql
+    go run migrations/migrate.go create aritcles go
+    
+
+c + shift + p = > go test will generate unit test for function
+
+
+* Blog (Soma)
+* News (Aneek)
+* Question/Answer (Amit) 
+* Poll (Sohel)
+* Library (Alamin)
+* Ticket (Kamrul)
+* Event Management (Mainul)
+* MLM (Shoaib)
+* Chat (Istiak)
+
+Deadline: 24-06-2021 

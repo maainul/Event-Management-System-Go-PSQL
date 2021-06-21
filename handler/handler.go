@@ -31,6 +31,10 @@ func NewServer(st *postgres.Storage) (*mux.Router, error) {
 	r.HandleFunc("/", s.getHome).Methods("GET")
 	r.HandleFunc("/event-types", s.getEventType).Methods("GET")
 	r.HandleFunc("/speakers", s.getSpeakers).Methods("GET")
+	r.HandleFunc("/events", s.getEvents).Methods("GET")
+	r.HandleFunc("/speaker-form", s.speakerForm).Methods("GET")
+	r.HandleFunc("/speaker-create-process", s.speakerCreateProcesss).Methods("POST")
+
 	return r, nil
 }
 

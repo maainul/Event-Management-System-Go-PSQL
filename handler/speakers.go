@@ -40,3 +40,30 @@ func (s *Server) getSpeakers(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
+func (s *Server) speakerForm(w http.ResponseWriter, r *http.Request) {
+	tmp := s.templates.Lookup("speaker_form.html")
+
+	if tmp == nil {
+		log.Println("Unable to find form")
+		return
+	}
+
+	err := tmp.Execute(w, tmp)
+	if err != nil {
+		log.Println("Error executing template", err)
+		return
+	}
+
+}
+
+func (s *Server) speakerCreateProcesss(w http.ResponseWriter, r *http.Request) {
+	createQuery := `INSERT INTO speakers (first_name, last_name, phone, address,username,email,created_at,updated_at) VALUES (:first_name, :last_name, :phone, :address,:username,:email,:created_at,:updated_at)`
+
+	var bk storage.Speakers
+	bk.FirstName = r.FormValue("first_name")
+	bk.LastName = r.FormValue("last_name")
+	bk.Phone = r.FormValue("phone")
+
+}
+

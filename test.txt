@@ -27,3 +27,98 @@ c + shift + p = > go test will generate unit test for function
 * Chat (Istiak)
 
 Deadline: 24-06-2021 
+
+Filter Tables
+
+
+
+-- +goose Up
+-- SQL in this section is executed when the migration is applied.
+CREATE TABLE IF NOT EXISTS users
+(
+    id         serial             not null,
+    first_name varchar(20)        not null,
+    last_name  varchar(20)        not null,
+    phone      varchar(11)        not null,
+    username   varchar(20) unique not null,
+    email      varchar(50) unique not null,
+    password   varchar(255)       not null,
+    is_active  boolean            default true,
+    is_admin   boolean            default false,
+    created_at timestamp default current_timestamp,
+    updated_at  timestamp default current_timestamp,
+
+    PRIMARY KEY (id)
+);
+
+-- +goose Up
+-- +goose StatementBegin
+CREATE TABLE IF NOT EXISTS speakers
+(
+    id         serial             not null,
+    first_name varchar(20)        not null,
+    last_name  varchar(20)        not null,
+    phone      varchar(11)        not null,
+    username   varchar(20)        unique not null,
+    email      varchar(50)        unique not null,
+    created_at timestamp default  current_timestamp,
+    updated_at  timestamp default current_timestamp,
+
+    PRIMARY KEY (id)
+);
+-- +goose StatementEnd
+
+-- +goose Down
+-- +goose StatementBegin
+DROP TABLE IF EXISTS speakers;
+-- +goose StatementEnd
+
+
+
+
+-- +goose Down
+-- SQL in this section is executed when the migration is rolled back.
+DROP TABLE IF EXISTS users;
+
+
+
+
+CREATE TABLE IF NOT EXISTS speakers
+(
+    id         serial ,
+    first_name varchar(20)        not null,
+    last_name  varchar(20)        not null,
+    phone      varchar(11)        not null,
+    address    varchar(200)       not null,
+    username   varchar(20)        unique not null,
+    email      varchar(50)        unique not null,
+    created_at timestamp default  current_timestamp,
+    updated_at  timestamp default current_timestamp,
+  
+  PRIMARY KEY(id)
+);
+​
+CREATE TABLE IF NOT EXISTS event_type
+(
+    id                  serial,
+    event_type_name     varchar(20)         not null,
+    created_at          timestamp default   current_timestamp,
+    updated_at          timestamp default   current_timestamp,
+    PRIMARY KEY(id)
+);
+​
+CREATE TABLE IF NOT EXISTS events
+(  
+    id                       serial,
+    event_name               VARCHAR(160),
+    speakers_id              INT REFERENCES speakers(id),
+    event_type_id            INT REFERENCES event_type(id),
+    start_time               timestamp,
+    end_time                 timestamp,
+    event_date               Date,
+    per_person_price         INT,
+    status                   boolean                   default true,
+    created_at               timestamp default         current_timestamp,
+    updated_at               timestamp default  current_timestamp,
+    PRIMARY KEY(id)
+);

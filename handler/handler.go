@@ -29,7 +29,7 @@ func NewServer(st *postgres.Storage) (*mux.Router, error) {
 	r := mux.NewRouter()
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./assets/"))))
 	r.HandleFunc("/", s.getHome).Methods("GET")
-	r.HandleFunc("/events", s.getEventType).Methods("GET")
+	r.HandleFunc("/event-types", s.getEventType).Methods("GET")
 	r.HandleFunc("/speakers", s.getSpeakers).Methods("GET")
 	return r, nil
 }

@@ -131,3 +131,102 @@ FROM events
 JOIN speakers ON events.speakers_id = speakers.id
 
 JOIN event_type ON events.event_type_id = event_type.id;
+
+
+
+
+
+package handler
+
+import (
+	"Event-Management-System-Go-PSQL/storage"
+	"fmt"
+	"log"
+	"net/http"
+)
+
+type (
+	feedBack struct {
+		FeedBack []storage.FeedBack
+	}
+)
+
+func (s *Server) getFeedBack(w http.ResponseWriter, r *http.Request) {
+
+	tmp := s.templates.Lookup("feedback_list.html")
+
+	if tmp == nil {
+		log.Println("Unable to look feedback list.html")
+		return
+	}
+	et, err := s.store.GetFeedBack()
+
+	fmt.Printf("%+v", et)
+
+	if err != nil {
+		log.Println("Unable to get feedback.  ", err)
+	}
+
+	tempData := feedBack{
+		FeedBack: et,
+	}
+
+	err = tmp.Execute(w, tempData)
+	if err != nil {
+		log.Println("Error executing tempalte:", err)
+		return
+	}
+}
+
+
+-- +goose Up
+-- +goose StatementBegin
+CREATE TABLE IF NOT EXISTS feedback
+(  
+    id                       serial,
+    user_id                  INT REFERENCES users(id),
+    feedback_message         VARCHAR(250),
+    created_at               timestamp default          current_timestamp,
+    updated_at               timestamp default          current_timestamp,
+  	PRIMARY KEY(id)
+);
+-- +goose StatementEnd
+
+-- +goose Down
+-- +goose StatementBegin
+DROP TABLE IF EXISTS feedback;
+-- +goose StatementEnd
+
+
+package postgres
+
+import (
+	"Event-Management-System-Go-PSQL/storage"
+)
+
+const ee = `SELECT feedback.id,username,email,feedback_message 
+
+FROM feedback 
+
+JOIN users ON feedback.user_id = users.id;`
+
+func (s *Storage) GetFeedBack() ([]storage.FeedBack, error) {
+	feedback := make([]storage.FeedBack, 0)
+	if err := s.db.Select(&feedback, ee); err != nil {
+		return nil, err
+	}
+	
+	return feedback, nil
+}
+
+
+func (s *Server) speakerCreateProcesss(w http.ResponseWriter, r *http.Request) {
+	createQuery := `INSERT INTO speakers (first_name, last_name, phone, address,username,email,created_at,updated_at) VALUES (:first_name, :last_name, :phone, :address,:username,:email,:created_at,:updated_at)`
+
+	var bk storage.Speakers
+	bk.FirstName = r.FormValue("first_name")
+	bk.LastName = r.FormValue("last_name")
+	bk.Phone = r.FormValue("phone")
+
+}
+r.HandleFunc("/speaker-create-process", s.speakerCreateProcesss).Methods("POST")

@@ -27,13 +27,28 @@ func NewServer(st *postgres.Storage) (*mux.Router, error) {
 	}
 
 	r := mux.NewRouter()
+
+	/* staic files Handler */
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./assets/"))))
+
+	/* index Handler */
 	r.HandleFunc("/", s.getHome).Methods("GET")
+
+	/* Event Type Handlers */
 	r.HandleFunc("/event-types", s.getEventType).Methods("GET")
-	r.HandleFunc("/speakers", s.getSpeakers).Methods("GET")
-	r.HandleFunc("/events", s.getEvents).Methods("GET")
-	r.HandleFunc("/speaker-form", s.speakerForm).Methods("GET")
-	r.HandleFunc("/fb", s.getFeedback).Methods("GET")
+	r.HandleFunc("/event-types/create", s.createEventType).Methods("GET")
+
+	/* Speakers Handlers */
+	r.HandleFunc("/speaker", s.getSpeakers).Methods("GET")
+	r.HandleFunc("/speaker/create", s.speakerForm).Methods("GET")
+
+	/* Event Handlers */
+	r.HandleFunc("/event", s.getEvents).Methods("GET")
+	r.HandleFunc("/event/create", s.createEvent).Methods("GET")
+
+	/* Feedback Handlers */
+	r.HandleFunc("/feedback", s.getFeedback).Methods("GET")
+	r.HandleFunc("/feedback/create", s.createFeedback).Methods("GET")
 
 	return r, nil
 }

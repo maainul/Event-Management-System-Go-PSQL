@@ -41,9 +41,9 @@ func (s *Server) getFeedback(w http.ResponseWriter, r *http.Request) {
 
 }
 
-/*
-func (s *Server) speakerForm(w http.ResponseWriter, r *http.Request) {
-	tmp := s.templates.Lookup("speaker_form.html")
+
+func (s *Server) createFeedback(w http.ResponseWriter, r *http.Request) {
+	tmp := s.templates.Lookup("feedback-form.html")
 
 	if tmp == nil {
 		log.Println("Unable to find form")
@@ -57,4 +57,4 @@ func (s *Server) speakerForm(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
-*/
+

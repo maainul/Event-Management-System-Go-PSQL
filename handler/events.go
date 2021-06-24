@@ -39,3 +39,13 @@ func (s *Server) getEvents(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (s *Server) createEventType(w http.ResponseWriter, r *http.Request) {
+	tmpl := s.templates.Lookup("event-type-form.html")
+
+	err := tmpl.Execute(w, tmpl)
+	if err != nil {
+		log.Println("Error executing template", err)
+		return
+	}
+}

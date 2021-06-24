@@ -3,7 +3,6 @@ package postgres
 import (
 	"Event-Management-System-Go-PSQL/storage"
 	"fmt"
-
 )
 
 const e = `
@@ -21,8 +20,8 @@ func (s *Storage) GetEvent() ([]storage.Events, error) {
 	if err := s.db.Select(&event, e); err != nil {
 		return nil, err
 	}
-	
-	
+
 	fmt.Print(et)
 	return event, nil
 }
+

@@ -6,20 +6,24 @@ import (
 	"net/http"
 
 	"github.com/Masterminds/sprig"
+	"github.com/gorilla/csrf"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/schema"
 )
 
 type (
 	Server struct {
 		templates *template.Template
 		store     *postgres.Storage
+		decoder   *schema.Decoder
 	}
 )
 
-func NewServer(st *postgres.Storage) (*mux.Router, error) {
+func NewServer(st *postgres.Storage, decoder *schema.Decoder) (*mux.Router, error) {
 
 	s := &Server{
-		store: st,
+		store:   st,
+		decoder: decoder,
 	}
 
 	if err := s.parseTemplates(); err != nil {
@@ -28,6 +32,8 @@ func NewServer(st *postgres.Storage) (*mux.Router, error) {
 
 	r := mux.NewRouter()
 
+	r.Use(csrf.Protect([]byte("1234")))
+
 	/* staic files Handler */
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./assets/"))))
 
@@ -35,8 +41,9 @@ func NewServer(st *postgres.Storage) (*mux.Router, error) {
 	r.HandleFunc("/", s.getHome).Methods("GET")
 
 	/* Event Type Handlers */
-	r.HandleFunc("/event-types", s.getEventType).Methods("GET")
-	r.HandleFunc("/event-types/create", s.createEventType).Methods("GET")
+	r.HandleFunc("/event-type", s.getEventType).Methods("GET")
+	r.HandleFunc("/event-type/create", s.createEventType).Methods("GET")
+	r.HandleFunc("/event-type/create", s.saveEventType).Methods("POST")
 
 	/* Speakers Handlers */
 	r.HandleFunc("/speaker", s.getSpeakers).Methods("GET")
@@ -44,7 +51,7 @@ func NewServer(st *postgres.Storage) (*mux.Router, error) {
 
 	/* Event Handlers */
 	r.HandleFunc("/event", s.getEvents).Methods("GET")
-	r.HandleFunc("/event/create", s.createEvent).Methods("GET")
+	//	r.HandleFunc("/event/create", s.createEvent).Methods("GET")
 
 	/* Feedback Handlers */
 	r.HandleFunc("/feedback", s.getFeedback).Methods("GET")

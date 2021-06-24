@@ -14,3 +14,22 @@ func (s *Storage) GetEventType() ([]storage.EventType, error) {
 	// fmt.Print(et)
 	return event, nil
 }
+
+const createEvent = `
+		INSERT INTO event_type(event_name)
+		VALUES (:event_name)
+		RETURNING id
+		`
+
+func (s *Storage) CreateEventType(event_type storage.EventType) (int32, error) {
+	stmt, err := s.db.PrepareNamed(createEvent)
+	if err != nil {
+		return 0, err
+	}
+
+	var id int32
+	if err := stmt.Get(&id, event_type); err != nil {
+		return 0, err
+	}
+	return id, nil
+}

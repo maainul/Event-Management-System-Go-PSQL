@@ -7,6 +7,8 @@ import (
 	"net/http"
 
 	"time"
+
+	"github.com/gorilla/schema"
 )
 
 func main() {
@@ -17,7 +19,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	r, err := handler.NewServer(store)
+	decoder := schema.NewDecoder()
+	decoder.IgnoreUnknownKeys(true)
+	r, err := handler.NewServer(store, decoder)
 	if err != nil {
 		log.Fatal("Handler not Found")
 	}

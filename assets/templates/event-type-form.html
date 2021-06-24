@@ -3,11 +3,13 @@
 <body>
 
 <h2>HTML Forms Add Event Type</h2>
-
+{{.CSRFField}}
 <form action="/event-type/create" method="post">
-  <label for="first_name" name="event_type_name">Event Type name:</label><br>
-  <input type="text" id="event_type_name" name="event_type_name"><br>
 
+  <label for="event_type_name">Event Type name:</label><br>
+
+  <input type="text" name="EventTypeName" value="{{.Form.EventTypeName}}"><br>
+{{with .FormErrors.EventTypeName}}<p>{{.}}</p>{{end}}
   <input type="submit" value="Submit">
 </form> 
 

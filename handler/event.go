@@ -13,13 +13,6 @@ import (
 type eventTypeData struct {
 	EventType []storage.EventType
 }
-
-/*
-type EventTypeForm struct {
-	CSRFToken     string
-	EventTypeName string
-} */
-
 type EventFormData struct {
 	CSRFField  template.HTML
 	Form       storage.EventType
@@ -83,10 +76,16 @@ func (s *Server) saveEventType(w http.ResponseWriter, r *http.Request) {
 
 	}
 	fmt.Printf("%#v", id)
+
+	http.Redirect(w, r, "/event-type", http.StatusSeeOther)
 }
 
 func (s *Server) loadCreateEventTypeTemplate(w http.ResponseWriter, r *http.Request, form EventFormData) {
 	tmpl := s.templates.Lookup("event-type-form.html")
+	if tmpl == nil {
+		log.Println("Unable to find form")
+		return
+	}
 	if err := tmpl.Execute(w, form); err != nil {
 		log.Println("Error executing tempalte : ", err)
 		return

@@ -4,12 +4,14 @@
 
 <h2>HTML Forms Add Feedback</h2>
 
-<form action="/feeback/create" method="post">
+<form action="/feedback/create" method="post">
+{{.CSRFField}}
+  <label for="event_type_name">Message:</label><br>
 
-  <label for="message" name="message">Message:</label><br>
-  <input type="text" id="message" name="message"><br>
+  <input type="text" name="Message" value="{{.Form.Message}}"><br>
+{{with .FormErrors.Message}}<p>{{.}}</p>{{end}}
   <input type="submit" value="Submit">
-  
 </form> 
+
 </body>
 </html>

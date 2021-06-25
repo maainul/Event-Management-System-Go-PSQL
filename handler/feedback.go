@@ -3,8 +3,11 @@ package handler
 import (
 	"Event-Management-System-Go-PSQL/storage"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/csrf"
 )
 
 type (
@@ -12,6 +15,12 @@ type (
 		Feedback []storage.Feedback
 	}
 )
+
+type FeedbackFormData struct {
+	CSRFField  template.HTML
+	Form       storage.Feedback
+	FormErrors map[string]string
+}
 
 func (s *Server) getFeedback(w http.ResponseWriter, r *http.Request) {
 
@@ -41,20 +50,55 @@ func (s *Server) getFeedback(w http.ResponseWriter, r *http.Request) {
 
 }
 
-
 func (s *Server) createFeedback(w http.ResponseWriter, r *http.Request) {
-	tmp := s.templates.Lookup("feedback-form.html")
+	log.Println("Method : Create Feedback called.")
 
-	if tmp == nil {
-		log.Println("Unable to find form")
-		return
+	data := FeedbackFormData{
+		CSRFField: csrf.TemplateField(r),
 	}
 
-	err := tmp.Execute(w, tmp)
-	if err != nil {
-		log.Println("Error executing template", err)
-		return
-	}
+	s.loadFeedbackTemplate(w, r, data)
 
 }
 
+func (s *Server) saveFeedback(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		log.Fatalln("Parsing error")
+	}
+
+	var form storage.Feedback
+	if err := s.decoder.Decode(&form, r.PostForm); err != nil {
+		log.Fatalln("Decoding error")
+	}
+	fmt.Printf("%#v", form)
+	if form.Message == "" {
+		data := FeedbackFormData{
+			CSRFField: csrf.TemplateField(r),
+			Form:      form,
+			FormErrors: map[string]string{
+				"Message": "Feedback Message is required.",
+			},
+		}
+		s.loadFeedbackTemplate(w, r, data)
+	}
+	id, err := s.store.CreateFeedback(form)
+	if err != nil {
+		log.Fatalln("Unable to save data :", err)
+
+	}
+	fmt.Printf("%#v", id)
+
+	http.Redirect(w, r, "/feedback", http.StatusSeeOther)
+}
+
+func (s *Server) loadFeedbackTemplate(w http.ResponseWriter, r *http.Request, form FeedbackFormData) {
+	tmpl := s.templates.Lookup("feedback-form.html")
+	if tmpl == nil {
+		log.Println("Unable to find form")
+		return
+	}
+	if err := tmpl.Execute(w, form); err != nil {
+		log.Println("Error executing tempalte : ", err)
+		return
+	}
+}

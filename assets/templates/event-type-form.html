@@ -3,9 +3,9 @@
 <body>
 
 <h2>HTML Forms Add Event Type</h2>
-{{.CSRFField}}
-<form action="/event-type/create" method="post">
 
+<form action="/event-type/create" method="post">
+{{.CSRFField}}
   <label for="event_type_name">Event Type name:</label><br>
 
   <input type="text" name="EventTypeName" value="{{.Form.EventTypeName}}"><br>

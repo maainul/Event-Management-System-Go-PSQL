@@ -18,3 +18,22 @@ func (s *Storage) GetFeedback() ([]storage.Feedback, error) {
 	// fmt.Print(et)
 	return feedback_list, nil
 }
+
+const createFeedback = `
+		INSERT INTO feedback(message)
+		VALUES (:message)
+		RETURNING id
+		`
+
+func (s *Storage) CreateFeedback(feedback storage.Feedback) (int32, error) {
+	stmt, err := s.db.PrepareNamed(createFeedback)
+	if err != nil {
+		return 0, err
+	}
+
+	var id int32
+	if err := stmt.Get(&id, feedback); err != nil {
+		return 0, err
+	}
+	return id, nil
+}

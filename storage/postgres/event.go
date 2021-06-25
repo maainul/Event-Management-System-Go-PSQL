@@ -16,8 +16,8 @@ func (s *Storage) GetEventType() ([]storage.EventType, error) {
 }
 
 const createEvent = `
-		INSERT INTO event_type(event_name)
-		VALUES (:event_name)
+		INSERT INTO event_type(event_type_name)
+		VALUES (:event_type_name)
 		RETURNING id
 		`
 

@@ -32,7 +32,9 @@ func NewServer(st *postgres.Storage, decoder *schema.Decoder) (*mux.Router, erro
 
 	r := mux.NewRouter()
 
-	r.Use(csrf.Protect([]byte("1234")))
+//	r.Use(csrf.Protect([]byte("Secure and safe token"), csrf.Secure(false)))
+
+	csrf.Protect([]byte("keep-it-secret-keep-it-safe-----"),csrf.Secure(false))(r)
 
 	/* staic files Handler */
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./assets/"))))

@@ -1,6 +1,8 @@
 package storage
 
-import "time"
+import (
+	"time"
+)
 
 type (
 	User struct {
@@ -53,12 +55,12 @@ type (
 	}
 
 	Feedback struct {
-		ID       int32  `db:"id"`
-		UserId   int32  `db:"user_id"`
-		Email    string `db:"email"`
-		Username string `db:"username"`
-		Message  string `db:"message"`
-		CreatedAt        time.Time `db:"created_at"`
-		UpdatedAt        time.Time `db:"updated_at"`
+		ID        int32     `db:"id"`
+		UserId    int32     `db:"user_id"`
+		Email     string    `db:"email"`
+		Username  string    `db:"username"`
+		Message   string    `db:"message"`
+		CreatedAt time.Time `db:"created_at"`
+		UpdatedAt time.Time `db:"updated_at"`
 	}
 )

@@ -13,7 +13,7 @@ import (
 type eventTypeData struct {
 	EventType []storage.EventType
 }
-type EventFormData struct {
+type EventTypeFormData struct {
 	CSRFField  template.HTML
 	Form       storage.EventType
 	FormErrors map[string]string
@@ -43,7 +43,7 @@ func (s *Server) getEventType(w http.ResponseWriter, r *http.Request) {
 func (s *Server) createEventType(w http.ResponseWriter, r *http.Request) {
 	log.Println("Method : createEventType")
 
-	data := EventFormData{
+	data := EventTypeFormData{
 		CSRFField: csrf.TemplateField(r),
 	}
 
@@ -61,7 +61,7 @@ func (s *Server) saveEventType(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Printf("%#v", form)
 	if form.EventTypeName == "" {
-		data := EventFormData{
+		data := EventTypeFormData{
 			CSRFField: csrf.TemplateField(r),
 			Form:      form,
 			FormErrors: map[string]string{
@@ -80,7 +80,7 @@ func (s *Server) saveEventType(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/event-type", http.StatusSeeOther)
 }
 
-func (s *Server) loadCreateEventTypeTemplate(w http.ResponseWriter, r *http.Request, form EventFormData) {
+func (s *Server) loadCreateEventTypeTemplate(w http.ResponseWriter, r *http.Request, form EventTypeFormData) {
 	tmpl := s.templates.Lookup("event-type-form.html")
 	if tmpl == nil {
 		log.Println("Unable to find form")

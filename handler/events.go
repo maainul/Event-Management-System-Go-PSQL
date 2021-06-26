@@ -3,8 +3,14 @@ package handler
 import (
 	"Event-Management-System-Go-PSQL/storage"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
+	"reflect"
+	"time"
+
+	"github.com/gorilla/csrf"
+	"github.com/gorilla/schema"
 )
 
 type (
@@ -12,6 +18,12 @@ type (
 		Events []storage.Events
 	}
 )
+
+type EventFormData struct {
+	CSRFField  template.HTML
+	Form       storage.Events
+	FormErrors map[string]string
+}
 
 func (s *Server) getEvents(w http.ResponseWriter, r *http.Request) {
 
@@ -40,22 +52,74 @@ func (s *Server) getEvents(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-/* func (s *Server) createEventType(w http.ResponseWriter, r *http.Request) {
-	tmpl := s.templates.Lookup("event-type-form.html")
+func (s *Server) createEvent(w http.ResponseWriter, r *http.Request) {
+	log.Println("Method : Create Event ")
 
-	err := tmpl.Execute(w, tmpl)
-	if err != nil {
-		log.Println("Error executing template", err)
-		return
+	data := EventFormData{
+		CSRFField: csrf.TemplateField(r),
 	}
+	s.loadCreateEventTemplate(w, r, data)
+
 }
-func (s *Server) saveEventType(w http.ResponseWriter, r *http.Request) {
+
+var timeConverter = func(value string) reflect.Value {
+	const shortForm =  "2006-01-02"
+    
+	if v, err := time.Parse(shortForm,value); err == nil {
+		return reflect.ValueOf(v)
+	}
+	return reflect.Value{} // this is the same as the private const invalidType
+}
+
+func (s *Server) saveEvent(w http.ResponseWriter, r *http.Request) {
+
+	if err := r.ParseForm(); err != nil {
+		log.Fatalln("Parsing error")
+	}
+
+	var form storage.Events
+	/* 	if err := s.decoder.Decode(&form, r.PostForm); err != nil {
+	   		log.Fatalln("Decoding Error in line 73")
+	   	}
+	*/
+	decoder := schema.NewDecoder()
+	decoder.RegisterConverter(time.Time{}, timeConverter)
+
+	if err := decoder.Decode(&form, r.Form); err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Printf("%#v", form)
+	if form.EventName == "" || form.NumberOfGuest == 0 || form.PerPersonPrice == 0 || form.EventDate.IsZero() || form.StartTime.IsZero() || form.EndTime.IsZero() {
+		data := EventFormData{
+			CSRFField: csrf.TemplateField(r),
+			Form:      form,
+			FormErrors: map[string]string{
+				"EventName": "Event name cannot be null",
+			},
+		}
+
+		s.loadCreateEventTemplate(w, r, data)
+	}
+
+	id, err := s.store.CreateEvent(form)
+	if err != nil {
+		log.Fatalln("Unable to save data:", err)
+	}
+	fmt.Printf("Save Event Data = %#v", id)
+
+	http.Redirect(w, r, "/event", http.StatusSeeOther)
+
+}
+func (s *Server) loadCreateEventTemplate(w http.ResponseWriter, r *http.Request, form EventFormData) {
 	tmpl := s.templates.Lookup("event-form.html")
-
-	err := tmpl.Execute(w, tmpl)
+	if tmpl == nil {
+		log.Println("Unable to find form")
+		return
+	}
+	err := tmpl.Execute(w, form)
 	if err != nil {
 		log.Println("Error executing template", err)
 		return
 	}
 }
-*/

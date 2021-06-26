@@ -15,14 +15,14 @@ func (s *Storage) GetEventType() ([]storage.EventType, error) {
 	return event, nil
 }
 
-const createEvent = `
+const createEventTypeQuery = `
 		INSERT INTO event_type(event_type_name)
 		VALUES (:event_type_name)
 		RETURNING id
 		`
 
 func (s *Storage) CreateEventType(event_type storage.EventType) (int32, error) {
-	stmt, err := s.db.PrepareNamed(createEvent)
+	stmt, err := s.db.PrepareNamed(createEventTypeQuery)
 	if err != nil {
 		return 0, err
 	}

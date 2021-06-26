@@ -124,13 +124,18 @@ CREATE TABLE IF NOT EXISTS events
 );
 
 
-SELECT events.id, event_name,event_type_name,start_time,end_time,event_date,per_person_price,first_name, last_name 
+SELECT 
+
+	events.id, event_name,event_type_name,start_time,end_time,
+    event_date,number_of_guest,per_person_price,first_name, last_name 
 
 FROM events 
 
 JOIN speakers ON events.speakers_id = speakers.id
 
 JOIN event_type ON events.event_type_id = event_type.id;
+
+
 
 
 

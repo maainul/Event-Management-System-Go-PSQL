@@ -4,33 +4,32 @@
 
 <h2>HTML Forms Add Event</h2>
 
-<form action="/event/create">
+<form action="/event/create"  method="post">
+  {{.CSRFField}}
+    
+    <label for="event_name" >Event name:</label><br>
 
-  <label for="event_name" name="event_name">Event name:</label><br>
-  <input type="text" id="event_name" name="event_name"><br>
+    <input type="text"  name="EventName"><br>
+    {{with .FormErrors.EventName}}<p>{{.}}</p>{{end}}
+    
+    <label for="first_name" name="NumberOfGuest">Number of Guest:</label><br>
+    <input type="text"  name="NumberOfGuest" ><br>
+    {{with .FormErrors.NumberOfGuest}}<p>{{.}}</p>{{end}}
+    
+    <label for="first_name" name="EventDate">EventDate:</label><br>
+    <input type="date" name="EventDate"><br>
 
-  <label for="first_name" name="first_name">Speaker Name:</label><br>
-  <input type="text" id="last_name" name="speakers_id"><br>
+        <label for="first_name" name="StartTime">StartTime:</label><br>
+    <input type="date" name="StartTime"><br>
 
-  <label for="first_name" name="first_name">Event Type:</label><br>
-  <input type="text" id="phone" name="event_type_id" ><br>
+        <label for="first_name" name="EndTime">EndTime:</label><br>
+    <input type="date" name="EndTime"><br>
 
-  <label for="first_name" name="first_name">Start Time:</label><br>
-  <input type="text" id="address" name="start_time"><br>
-
-  <label for="first_name" name="first_name">End TIme:</label><br>
-  <input type="text" id="user_name" name="end_time"><br>
-
-  <label for="first_name" name="first_name">Event Date:</label><br>
-  <input type="text" id="email" name="event_date"><br>
-
-  <label for="first_name" name="first_name">Number of Guest:</label><br>
-  <input type="text" id="email" name="number_of_guest"><br>
-
-  <label for="first_name" name="first_name">Per Person Price:</label><br>
-  <input type="text" id="email" name="per_person_price"><br>
-
-  <input type="submit" value="Submit">
+    <label for="first_name" name="PerPersonPrice">Per Person Price:</label><br>
+    <input type="text"  name="PerPersonPrice"><br>
+    {{with .FormErrors.PerPersonPrice}}<p>{{.}}</p>{{end}}
+    
+    <input type="submit" value="Submit">
 
 </form> 
 

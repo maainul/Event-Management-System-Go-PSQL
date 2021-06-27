@@ -55,6 +55,7 @@ func NewServer(st *postgres.Storage, decoder *schema.Decoder) (*mux.Router, erro
 	r.HandleFunc("/event", s.getEvents).Methods("GET")
 	r.HandleFunc("/event/create", s.createEvent).Methods("GET")
 	r.HandleFunc("/event/create", s.saveEvent).Methods("Post")
+	r.HandleFunc("/event/show", s.eventDetails).Methods("GET")
 
 	/* Feedback Handlers */
 	r.HandleFunc("/feedback", s.getFeedback).Methods("GET")

@@ -39,7 +39,7 @@ func (s *Server) getEvents(w http.ResponseWriter, r *http.Request) {
 	}
 	et, err := s.store.GetEvent()
 
-	fmt.Printf("%+v", et)
+	//	fmt.Printf("%+v", et)
 
 	if err != nil {
 		log.Println("Unable to get event type.  ", err)
@@ -88,7 +88,7 @@ func (s *Server) saveEvent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Printf("%#v", form)
-	if form.EventName == "" || form.NumberOfGuest == 0 || form.PerPersonPrice == 0 || form.EventDate.IsZero() || form.StartTime.IsZero() || form.EndTime.IsZero() {
+	if form.EventName == "" || form.NumberOfGuest == 0 || form.PerPersonPrice == 0 || form.EventDate == "" || form.EventStartTime == "" || form.EventEndTime == "" {
 		data := EventFormData{
 			CSRFField: csrf.TemplateField(r),
 			Form:      form,
@@ -99,11 +99,11 @@ func (s *Server) saveEvent(w http.ResponseWriter, r *http.Request) {
 		s.loadCreateEventTemplate(w, r, data)
 	}
 
-	id, err := s.store.CreateEvent(form)
+	_, err := s.store.CreateEvent(form)
 	if err != nil {
 		log.Fatalln("Unable to save data:", err)
 	}
-	fmt.Printf("Save Event Data = %#v", id)
+	//	fmt.Printf("Save Event Data = %#v", id)
 
 	http.Redirect(w, r, "/event", http.StatusSeeOther)
 
@@ -120,7 +120,7 @@ func (s *Server) loadCreateEventTemplate(w http.ResponseWriter, r *http.Request,
 
 	et, err := s.store.GetEventType()
 	sp, err := s.store.GetSpeakers()
-	fmt.Printf("%+v", et)
+	//fmt.Printf("%+v", et)
 	if err != nil {
 		log.Println("Unable to get event type.  ", err)
 	}
@@ -133,7 +133,38 @@ func (s *Server) loadCreateEventTemplate(w http.ResponseWriter, r *http.Request,
 	}
 	err = tmpl.Execute(w, tempData)
 	if err != nil {
-		log.Println("Error executing template", err)
+		http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
+		return
+		/* log.Println("Error executing template", err)
+		return */
+	}
+
+}
+
+/* ----------------Show Event Details By ID----------------------------------*/
+
+func (s *Server) eventDetails(w http.ResponseWriter, r *http.Request) {
+	id := r.FormValue("id")
+	if id == "" {
+		log.Println("Not found")
+	}
+	tmp := s.templates.Lookup("event_details.html")
+	if tmp == nil {
+		log.Println("Unable to load event details page.")
+		return
+	}
+	et, err := s.store.GetDataById(id)
+	fmt.Println("Execte from line 157.", et)
+	if err != nil {
+		log.Println("Unable to get event type.  ", err)
+	}
+	/* if et == true {
+
+	}
+	et.Status =  */
+	err = tmp.Execute(w, et)
+	if err != nil {
+		log.Println("Error executing template:", err)
 		return
 	}
 }

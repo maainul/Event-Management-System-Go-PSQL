@@ -12,9 +12,8 @@
     <input type="text"  name="EventName"><br>
     {{with .FormErrors.EventName}}<p>{{.}}</p>{{end}}
     
-    <label for="first_name" name="NumberOfGuest">Number of Guest:</label><br>
-    <input type="text"  name="NumberOfGuest" ><br>
-    {{with .FormErrors.NumberOfGuest}}<p>{{.}}</p>{{end}}
+  
+   
     
     <label for="ID">Event Type</label><br>
     
@@ -47,11 +46,15 @@
     <label for="first_name" name="EventDate">EventDate:</label><br>
     <input type="date" name="EventDate"><br>
 
-        <label for="first_name" name="StartTime">StartTime:</label><br>
-    <input type="date" name="StartTime"><br>
+    <label for="first_name" name="EventStartTime">StartTime:</label><br>
+    <input type="time" name="EventStartTime"><br>
 
-        <label for="first_name" name="EndTime">EndTime:</label><br>
-    <input type="date" name="EndTime"><br>
+    <label for="first_name" name="EventEndTime">EndTime:</label><br>
+    <input type="time" name="EventEndTime"><br>
+
+    <label for="first_name" name="NumberOfGuest">Number of Guest:</label><br>
+    <input type="text"  name="NumberOfGuest" ><br>
+    {{with .FormErrors.NumberOfGuest}}<p>{{.}}</p>{{end}}
 
     <label for="first_name" name="PerPersonPrice">Per Person Price:</label><br>
     <input type="text"  name="PerPersonPrice"><br>

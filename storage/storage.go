@@ -42,9 +42,9 @@ type (
 		EventTypeName    string    `db:"event_type_name"`
 		EventName        string    `db:"event_name"`
 		NumberOfGuest    int32     `db:"number_of_guest"`
-		StartTime        time.Time `db:"start_time"`
-		EndTime          time.Time `db:"end_time"`
-		EventDate        time.Time `db:"event_date"`
+		EventStartTime   string    `db:"event_start_time"`
+		EventEndTime     string    `db:"event_end_time"`
+		EventDate        string    `db:"event_date"`
 		PerPersonPrice   int32     `db:"per_person_price"`
 		SpeakerId        int32     `db:"speakers_id"`
 		SpeakerFirstName string    `db:"first_name"`

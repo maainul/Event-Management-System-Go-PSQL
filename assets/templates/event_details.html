@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Event Details</title>
+</head>
+<body>
+<h1>Event Deatils </h1>
+
+<h2>
+    <h3>Event Date : {{.EventDate}}</h3>
+    <h3>Event Name : {{.EventName}}</h3>
+    <h3>EventStart Time : {{.EventStartTime}}</h3>
+    <h3>Event End Time : {{.EventEndTime}}</h3>
+    <h3>EventTypeName : {{.EventTypeName}}</h3>
+    <h3>Number Of Guest : {{.NumberOfGuest}}</h3>
+    <h3>Per Person Price : {{.PerPersonPrice}}</h3>
+    <h3>Speaker First Name : {{.SpeakerFirstName}}</h3>
+    <h3>SpeakerLastName : {{.SpeakerLastName}}</h3>
+    <h3 id="demo"></h3>
+   <script>
+    if ({{.Status}} == true) {
+        document.getElementById("demo").innerHTML = "Status = Active";
+    }else{
+     document.getElementById("demo").innerHTML = "Status = InActive";
+    }
+</script>
+
+</body>
+</html>
+
+

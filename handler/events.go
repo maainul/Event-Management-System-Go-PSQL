@@ -6,11 +6,8 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"reflect"
-	"time"
 
 	"github.com/gorilla/csrf"
-	"github.com/gorilla/schema"
 )
 
 type (
@@ -38,17 +35,12 @@ func (s *Server) getEvents(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	et, err := s.store.GetEvent()
-
-	//	fmt.Printf("%+v", et)
-
 	if err != nil {
 		log.Println("Unable to get event type.  ", err)
 	}
-
 	tempData := events{
 		Events: et,
 	}
-
 	err = tmp.Execute(w, tempData)
 	if err != nil {
 		log.Println("Error executing tempalte:", err)
@@ -76,18 +68,9 @@ func (s *Server) saveEvent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var form storage.Events
-	/* 	if err := s.decoder.Decode(&form, r.PostForm); err != nil {
-	   		log.Fatalln("Decoding Error in line 73")
-	   	}
-	*/
-	decoder := schema.NewDecoder()
-	decoder.RegisterConverter(time.Time{}, timeConverter)
-
-	if err := decoder.Decode(&form, r.Form); err != nil {
+	if err := s.decoder.Decode(&form, r.Form); err != nil {
 		fmt.Println(err)
 	}
-
-	fmt.Printf("%#v", form)
 	if form.EventName == "" || form.NumberOfGuest == 0 || form.PerPersonPrice == 0 || form.EventDate == "" || form.EventStartTime == "" || form.EventEndTime == "" {
 		data := EventFormData{
 			CSRFField: csrf.TemplateField(r),
@@ -135,8 +118,6 @@ func (s *Server) loadCreateEventTemplate(w http.ResponseWriter, r *http.Request,
 	if err != nil {
 		http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
 		return
-		/* log.Println("Error executing template", err)
-		return */
 	}
 
 }
@@ -158,24 +139,9 @@ func (s *Server) eventDetails(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Unable to get event type.  ", err)
 	}
-	/* if et == true {
-
-	}
-	et.Status =  */
 	err = tmp.Execute(w, et)
 	if err != nil {
 		log.Println("Error executing template:", err)
 		return
 	}
-}
-
-/* -----------------------------------------Time Converter------------------------------------------------------------*/
-
-var timeConverter = func(value string) reflect.Value {
-	const shortForm = "2006-01-02"
-
-	if v, err := time.Parse(shortForm, value); err == nil {
-		return reflect.ValueOf(v)
-	}
-	return reflect.Value{} // this is the same as the private const invalidType
 }

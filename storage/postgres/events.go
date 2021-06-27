@@ -87,7 +87,8 @@ SELECT
 	per_person_price,
 	first_name,
 	last_name,
-	status
+	status,
+	
 
 FROM events
 

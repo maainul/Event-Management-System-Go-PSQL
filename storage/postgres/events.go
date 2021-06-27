@@ -45,7 +45,9 @@ const createEventQuery = `
 		per_person_price,
 		event_date,
 		start_time,
-		end_time
+		end_time,
+		event_type_id,
+		speakers_id
 	)
 	VALUES(
 		:event_name,
@@ -53,7 +55,9 @@ const createEventQuery = `
 		:per_person_price,
 		:event_date,
 		:start_time,
-		:end_time
+		:end_time,
+		:event_type_id,
+		:speakers_id
 	)
 	RETURNING id
 	`

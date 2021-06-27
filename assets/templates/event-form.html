@@ -16,6 +16,34 @@
     <input type="text"  name="NumberOfGuest" ><br>
     {{with .FormErrors.NumberOfGuest}}<p>{{.}}</p>{{end}}
     
+    <label for="ID">Event Type</label><br>
+    
+    <select name="EventTypeId">
+    
+        <option value="">-Select-</option>
+    
+        {{range .EventType}}
+    
+            <option value="{{.ID}}">{{.EventTypeName}}</option>
+    
+        {{end}}
+    
+    </select><br>
+
+    <label for="ID">Speakers</label><br>
+    
+    <select name="SpeakerId">
+    
+        <option value="ID">-Select-</option>
+
+        {{range .Speakers}}
+           
+            <option value="{{.ID}}">{{.FirstName}} - {{.LastName}}</option>
+
+        {{end}}
+    
+    </select><br>
+
     <label for="first_name" name="EventDate">EventDate:</label><br>
     <input type="date" name="EventDate"><br>
 
@@ -30,6 +58,15 @@
     {{with .FormErrors.PerPersonPrice}}<p>{{.}}</p>{{end}}
     
     <input type="submit" value="Submit">
+
+
+
+
+ {{range .Speakers}}
+        
+          <p>{{.ID}}  - {{.FirstName}}</p>
+
+    {{end}}
 
 </form> 
 

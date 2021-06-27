@@ -23,7 +23,11 @@ type EventFormData struct {
 	CSRFField  template.HTML
 	Form       storage.Events
 	FormErrors map[string]string
+	EventType  []storage.EventType
+	Speakers   []storage.Speakers
 }
+
+/*--------------------------------------------------GET EVENT ------------------------------------*/
 
 func (s *Server) getEvents(w http.ResponseWriter, r *http.Request) {
 
@@ -52,6 +56,7 @@ func (s *Server) getEvents(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+/* -----------------------------------------Create Event Handler------------------------------------------------------------*/
 func (s *Server) createEvent(w http.ResponseWriter, r *http.Request) {
 	log.Println("Method : Create Event ")
 
@@ -62,14 +67,7 @@ func (s *Server) createEvent(w http.ResponseWriter, r *http.Request) {
 
 }
 
-var timeConverter = func(value string) reflect.Value {
-	const shortForm =  "2006-01-02"
-    
-	if v, err := time.Parse(shortForm,value); err == nil {
-		return reflect.ValueOf(v)
-	}
-	return reflect.Value{} // this is the same as the private const invalidType
-}
+/* -----------------------------------------Save Event Handler------------------------------------------------------------*/
 
 func (s *Server) saveEvent(w http.ResponseWriter, r *http.Request) {
 
@@ -98,7 +96,6 @@ func (s *Server) saveEvent(w http.ResponseWriter, r *http.Request) {
 				"EventName": "Event name cannot be null",
 			},
 		}
-
 		s.loadCreateEventTemplate(w, r, data)
 	}
 
@@ -111,15 +108,43 @@ func (s *Server) saveEvent(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/event", http.StatusSeeOther)
 
 }
+
+/* -----------------------------------------Load Create Tempalte Handler------------------------------------------------------------*/
+
 func (s *Server) loadCreateEventTemplate(w http.ResponseWriter, r *http.Request, form EventFormData) {
 	tmpl := s.templates.Lookup("event-form.html")
 	if tmpl == nil {
 		log.Println("Unable to find form")
 		return
 	}
-	err := tmpl.Execute(w, form)
+
+	et, err := s.store.GetEventType()
+	sp, err := s.store.GetSpeakers()
+	fmt.Printf("%+v", et)
+	if err != nil {
+		log.Println("Unable to get event type.  ", err)
+	}
+	tempData := EventFormData{
+		CSRFField:  "",
+		Form:       storage.Events{},
+		FormErrors: map[string]string{},
+		EventType:  et,
+		Speakers:   sp,
+	}
+	err = tmpl.Execute(w, tempData)
 	if err != nil {
 		log.Println("Error executing template", err)
 		return
 	}
+}
+
+/* -----------------------------------------Time Converter------------------------------------------------------------*/
+
+var timeConverter = func(value string) reflect.Value {
+	const shortForm = "2006-01-02"
+
+	if v, err := time.Parse(shortForm, value); err == nil {
+		return reflect.ValueOf(v)
+	}
+	return reflect.Value{} // this is the same as the private const invalidType
 }

@@ -86,7 +86,7 @@ func newDBFromConfig() string {
 	dbParams := " " + "user=postgres"
 	dbParams += " " + "host=localhost"
 	dbParams += " " + "port=5432"
-	dbParams += " " + "dbname=eventDB"
+	dbParams += " " + "dbname=dbevent"
 	dbParams += " " + "password=0"
 	dbParams += " " + "sslmode=disable"
 

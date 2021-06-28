@@ -87,9 +87,8 @@ SELECT
 	per_person_price,
 	first_name,
 	last_name,
-	status,
+	status
 	
-
 FROM events
 
 JOIN speakers ON 
@@ -109,4 +108,16 @@ func (s *Storage) GetDataById(id string) (storage.Events, error) {
 	jason := storage.Events{}
 	err = s.db.Get(&jason, selectByIdQuery, i)
 	return jason, err
+}
+
+const countEvent = `SELECT COUNT(id) FROM events`
+
+func (s *Storage) CountEvent() int32 {
+	var count int32
+
+	err := s.db.QueryRow(countEvent).Scan(&count)
+	if err != nil {
+		log.Println("Unable to ge data")
+	}
+	return count
 }

@@ -47,6 +47,11 @@ func NewServer(st *postgres.Storage, decoder *schema.Decoder) (*mux.Router, erro
 	r.HandleFunc("/event-type/create", s.createEventType).Methods("GET")
 	r.HandleFunc("/event-type/create", s.saveEventType).Methods("POST")
 
+	/* Auth Event Type Handlers */
+	r.HandleFunc("/auth/event-type", s.getEventType).Methods("GET")
+	r.HandleFunc("/auth/event-type/create", s.createEventType).Methods("GET")
+	r.HandleFunc("/auth/event-type/create", s.saveEventType).Methods("POST")
+
 	/* Speakers Handlers */
 	r.HandleFunc("/speaker", s.getSpeakers).Methods("GET")
 	r.HandleFunc("/speaker/create", s.speakerForm).Methods("GET")
@@ -56,6 +61,12 @@ func NewServer(st *postgres.Storage, decoder *schema.Decoder) (*mux.Router, erro
 	r.HandleFunc("/event/create", s.createEvent).Methods("GET")
 	r.HandleFunc("/event/create", s.saveEvent).Methods("Post")
 	r.HandleFunc("/event/show", s.eventDetails).Methods("GET")
+
+	/* Event Handlers */
+	r.HandleFunc("/auth/event", s.authGetEvents).Methods("GET")
+	r.HandleFunc("auth/event/create", s.createEvent).Methods("GET")
+	r.HandleFunc("/authevent/create", s.saveEvent).Methods("Post")
+	r.HandleFunc("auth/event/show", s.eventDetails).Methods("GET")
 
 	/* Feedback Handlers */
 	r.HandleFunc("/feedback", s.getFeedback).Methods("GET")

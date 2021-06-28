@@ -29,3 +29,43 @@
     7. Decoration
 
     
+
+# 
+
+
+Singup Page
+
+Login
+
+Feedback
+
+Buy Ticket
+# Events Functionality
+
+
+Date wise Events
+
+total events
+
+total events today (Datewise events)
+
+total attends and total set not booked --- Eventwise
+
+this year total events 
+
+// this month total events
+
+// this year attended person
+
+// this year income
+
+// this year not booked seat
+
+# Speakers
+
+this year attend events
+
+numbe of speakers
+
+event type wise speaker
+

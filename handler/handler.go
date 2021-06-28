@@ -39,9 +39,6 @@ func NewServer(st *postgres.Storage, decoder *schema.Decoder) (*mux.Router, erro
 	/* staic files Handler */
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./assets/"))))
 
-	/* index Handler */
-	r.HandleFunc("/", s.getHome).Methods("GET")
-
 	/* Event Type Handlers */
 	r.HandleFunc("/event-type", s.getEventType).Methods("GET")
 	r.HandleFunc("/event-type/create", s.createEventType).Methods("GET")
@@ -72,6 +69,11 @@ func NewServer(st *postgres.Storage, decoder *schema.Decoder) (*mux.Router, erro
 	r.HandleFunc("/feedback", s.getFeedback).Methods("GET")
 	r.HandleFunc("/feedback/create", s.createFeedback).Methods("GET")
 	r.HandleFunc("/feedback/create", s.saveFeedback).Methods("POST")
+
+	/* User Handlers */
+	r.HandleFunc("/user", s.getUser).Methods("GET")
+	r.HandleFunc("/user/create", s.createUser).Methods("GET")
+	r.HandleFunc("/user/create", s.saveUser).Methods("POST")
 
 	return r, nil
 }

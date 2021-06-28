@@ -11,6 +11,7 @@ type (
 		LastName  string    `db:"last_name"`
 		Username  string    `db:"username"`
 		Email     string    `db:"email"`
+		Password  string    `db:"password"`
 		IsActive  bool      `db:"is_active"`
 		IsAdmin   bool      `db:"is_admin"`
 		CreatedAt time.Time `db:"created_at"`

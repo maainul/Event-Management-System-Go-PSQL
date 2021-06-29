@@ -43,6 +43,7 @@ func NewServer(st *postgres.Storage, decoder *schema.Decoder, session *sessions.
 	/* Login Handler */
 	r.HandleFunc("/login", s.getLogin).Methods("GET")
 	r.HandleFunc("/login", s.postLogin).Methods("POST")
+	r.HandleFunc("/logout", s.logout).Methods("GET")
 
 	/* Admin Home  Handler */
 	r.HandleFunc("/auth/admin-home", s.getAdminHomePage).Methods("GET")

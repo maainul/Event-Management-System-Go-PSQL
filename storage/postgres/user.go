@@ -47,27 +47,16 @@ func (s *Storage) CreateUser(usr storage.User) (int32, error) {
 	return id, nil
 }
 
-/* const getUserEmailAndPass = `
-	SELECT * FROM users WHERE email= $1 AND password= $2
-`
-
-func (s *Storage) GetUserEmailAndPass(email string, password string) (*storage.User, error) {
-	jason := storage.User{}
-	err := s.db.Get(&jason, getUserEmailAndPass, email, password)
-	fmt.Print("Get email and pass  = ", jason)
-	return &jason, err
-}
-*/
 const getUserEmailAndPass = `
 	SELECT * from users
 	WHERE email = $1 AND password = $2
 `
 
-func (s *Storage) GetUserEmailAndPass(email, password string) (*storage.User, error) {
+func (s *Storage) GetUserEmailAndPass(email, password string) *storage.User {
 	user := storage.User{}
 	if err := s.db.Get(&user, getUserEmailAndPass, email, password); err != nil {
-		return nil, err
+		return &user
 	}
 	fmt.Print("Get email and pass  = ", user)
-	return &user, nil
+	return &user
 }

@@ -68,12 +68,11 @@ func (s *Server) postLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// call database for match email and password
-	emailandPasswordStruct, err := s.store.GetUserEmailAndPass(form.Email, form.Password)
+	emailandPasswordStruct := s.store.GetUserEmailAndPass(form.Email, form.Password)
 	sValue := emailandPasswordStruct.ID //user id
-	if err != nil {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		log.Fatalln("Can't able to find matching user name and pass")
 
+	if emailandPasswordStruct.Email == "" && emailandPasswordStruct.Password == "" {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
 	}
 
 	if emailandPasswordStruct.IsAdmin == true {
@@ -98,6 +97,13 @@ func (s *Server) postLogin(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Admin is true 101")
 	}
 
+}
+
+func (s *Server) logout(w http.ResponseWriter, r *http.Request) {
+	session, _ := s.session.Get(r, "event_management_app")
+	session.Values["user_id"] = 0
+	session.Save(r, w)
+	http.Redirect(w, r, "/event", http.StatusSeeOther)
 }
 
 func (s *Server) loadLoginTemplate(w http.ResponseWriter, r *http.Request, form LoginTempData) {

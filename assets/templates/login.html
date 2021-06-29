@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+
+    <link rel="stylesheet" href="/static/css/app.min.css" />
+  </head>
+  <body>
+    <form action="/login" method="post">
+      {{.CSRFField}}
+      <div class="flex flex-col">
+        <div>
+          <label class="block" for="Email">Email</label>
+          <input type="text" name="Email" class="border border-gray-500" value="{{.Form.Email}}" />
+          {{with .FormErrors.Email}}
+            <p>{{.}}</p>
+           {{end}} 
+        </div>
+        
+        <div>
+          <label class="block" for="Password">Password</label>
+          <input type="password" name="Password" class="border border-gray-500" value="{{.Form.Password}}" />
+          {{with .FormErrors.Password}}
+            <p>{{.}}</p>
+           {{end}} 
+        </div>
+
+        <div>
+          <button class="bg-green-600 px-4 py-2" type="submit">Login</button>
+        </div>
+      </div>
+    </form>
+  </body>
+</html>

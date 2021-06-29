@@ -1,9 +1,12 @@
 package postgres
 
-import "Event-Management-System-Go-PSQL/storage"
+import (
+	"Event-Management-System-Go-PSQL/storage"
+	"fmt"
+)
 
 const getuserQuery = `
-	SELECT id, first_name, last_name, username, email from users
+	SELECT id, first_name, last_name, username, email,password from users
 `
 
 func (s *Storage) GetUser() ([]storage.User, error) {
@@ -42,4 +45,29 @@ func (s *Storage) CreateUser(usr storage.User) (int32, error) {
 		return 0, err
 	}
 	return id, nil
+}
+
+/* const getUserEmailAndPass = `
+	SELECT * FROM users WHERE email= $1 AND password= $2
+`
+
+func (s *Storage) GetUserEmailAndPass(email string, password string) (*storage.User, error) {
+	jason := storage.User{}
+	err := s.db.Get(&jason, getUserEmailAndPass, email, password)
+	fmt.Print("Get email and pass  = ", jason)
+	return &jason, err
+}
+*/
+const getUserEmailAndPass = `
+	SELECT * from users
+	WHERE email = $1 AND password = $2
+`
+
+func (s *Storage) GetUserEmailAndPass(email, password string) (*storage.User, error) {
+	user := storage.User{}
+	if err := s.db.Get(&user, getUserEmailAndPass, email, password); err != nil {
+		return nil, err
+	}
+	fmt.Print("Get email and pass  = ", user)
+	return &user, nil
 }

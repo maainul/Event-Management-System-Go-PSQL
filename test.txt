@@ -307,3 +307,87 @@ FROM events
 JOIN speakers ON events.speakers_id = speakers.id
 JOIN event_type ON events.event_type_id = event_type.id
 WHERE events.id = 1
+
+
+	/*
+		r.HandleFunc("/event-type", s.getEventType).Methods("GET")
+		r.HandleFunc("/event-type/create", s.createEventType).Methods("GET")
+		r.HandleFunc("/event-type/create", s.saveEventType).Methods("POST")
+	*/
+
+
+	/* r.HandleFunc("/event/create", s.createEvent).Methods("GET")
+	r.HandleFunc("/event/create", s.saveEvent).Methods("Post")
+	r.HandleFunc("/event/show", s.eventDetails).Methods("GET") */
+
+
+
+	//	r.Use(csrf.Protect([]byte("Secure and safe token"), csrf.Secure(false)))
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+
+    <link rel="stylesheet" href="/static/css/app.min.css" />
+  </head>
+  <body>
+    <form action="/login" method="post">
+      {{.CSRFField}}
+      <div class="flex flex-col">
+        <div>
+          <label class="block" for="Email">Email</label>
+          <input type="text" name="Email" class="border border-gray-500" value="{{.Form.Email}}" />
+          {{with .FormErrors.Email}}
+            <p>{{.}}</p>
+           {{end}} 
+        </div>
+        
+        <div>
+          <label class="block" for="Password">Password</label>
+          <input type="password" name="Password" class="border border-gray-500" value="{{.Form.Password}}" />
+          {{with .FormErrors.Password}}
+            <p>{{.}}</p>
+           {{end}} 
+        </div>
+
+        <div class="item form-group">
+            <label > Password<span class="required">*</span></label>
+            <div class="col-md-6 col-sm-6 ">
+                <input type="password" name="password" id="password" required="" onkeyup='check();' minlength="6" placeholder="min 6 character must be match" class="form-control" >
+            </div>
+        </div>
+
+
+        <div class="item form-group">
+            <label class="col-form-label col-md-3 col-sm-3 label-align">Retype Password<span class="required">*</span></label>
+        <div class="col-md-6 col-sm-6 ">
+            <input type="password" name="employee_password" id="employee_password" required="" onkeyup='check();'  minlength="6" placeholder="min 6 character must be match" class="form-control" >
+        </div>
+
+        <div>
+          <button class="bg-green-600 px-4 py-2" type="submit">Login</button>
+        </div>
+      </div>
+    </form>
+  </body>
+</html>
+
+
+/* if form.Email != emailandPasswordStruct.Email {
+			log.Fatalf("Email not match")
+		}
+		// password bcrypt
+		hash, _ := bcrypt.GenerateFromPassword([]byte(form.Password), bcrypt.DefaultCost)
+		/* 	if form.Password != emailandPasswordStruct.Password {
+			   log.Fatalf("Password is not match")
+		   }
+		*/
+		/* if err := bcrypt.CompareHashAndPassword(hash, []byte(emailandPasswordStruct.Password)); err != nil {
+			log.Fatalf("Password does not match ")
+		} */

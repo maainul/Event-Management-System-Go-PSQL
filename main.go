@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/gorilla/schema"
+	"github.com/gorilla/sessions"
 )
 
 func main() {
@@ -21,7 +22,8 @@ func main() {
 
 	decoder := schema.NewDecoder()
 	decoder.IgnoreUnknownKeys(true)
-	r, err := handler.NewServer(store, decoder)
+	session := sessions.NewCookieStore([]byte("1234"))
+	r, err := handler.NewServer(store, decoder, session)
 	if err != nil {
 		log.Fatal("Handler not Found")
 	}

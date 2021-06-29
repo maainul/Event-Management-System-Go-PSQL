@@ -28,17 +28,44 @@
    {{with .FormErrors.Email}}
             <p>{{.}}</p>
            {{end}} 
-    <label name="Password">Password:</label><br>
-    <input type="password"  name="Password"><br>
-   {{with .FormErrors.Password}}
-            <p>{{.}}</p>
-           {{end}} 
-    
+       <div class="item form-group">
+                <label class="col-form-label col-md-3 col-sm-3 label-align"> Password<span class="required">*</span></label>
+                <div class="col-md-6 col-sm-6 ">
+                  <input type="password" name="Password" id="password" required="" onkeyup='check();' minlength="6" class="form-control" value="{{.Form.Password}}"  >
+                </div>
+                {{with .FormErrors.Password}}
+                    <p>{{.}}</p>
+                {{end}} 
+              </div>
+
+        <div class="item form-group">
+                <label class="col-form-label col-md-3 col-sm-3 label-align">Retype Password<span class="required">*</span></label>
+        <div class="col-md-6 col-sm-6 ">
+                  <input type="password" name="retype_password" id="retype_password" required="" onkeyup='check();'  minlength="6"class="form-control" value="{{.Form.Password}}">
+        </div>
+
+
     <input type="submit" value="Submit">
+
 
 
 </form> 
 
+/*validate*/
+<script>
+var password = document.getElementById("password")
+  , retype_password = document.getElementById("retype_password");
+
+function validatePassword(){
+  if(password.value != retype_password.value) {
+    retype_password.setCustomValidity("Passwords Don't Match");
+  } else {
+    retype_password.setCustomValidity('');
+  }
+}
+password.onchange = validatePassword;
+retype_password.onkeyup = validatePassword;
+</script>
 </body>
 </html>
 

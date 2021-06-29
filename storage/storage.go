@@ -2,6 +2,8 @@ package storage
 
 import (
 	"time"
+
+	validation "github.com/go-ozzo/ozzo-validation"
 )
 
 type (
@@ -65,3 +67,38 @@ type (
 		UpdatedAt time.Time `db:"updated_at"`
 	}
 )
+
+const nameLength = "Name should be 4 to 30 Characters"
+const firstNameRequired = "First Name is Required"
+const lastNameRequired = "Last Name is Required"
+const emailIsRequired = "Email is Required"
+const passwordIsRequired = "Email is Required"
+const usernameIsRequired = "User name is Required"
+
+func (a User) Validate() error {
+	return validation.ValidateStruct(&a,
+		validation.Field(&a.FirstName,
+			validation.Required.Error(firstNameRequired),
+			validation.Length(5, 30).Error(nameLength),
+		),
+
+		validation.Field(&a.LastName,
+			validation.Required.Error(lastNameRequired),
+			validation.Length(5, 30).Error(nameLength),
+		),
+
+		validation.Field(&a.Email,
+			validation.Required.Error(emailIsRequired),
+			validation.Length(5, 30).Error(nameLength),
+		),
+
+		validation.Field(&a.Username,
+			validation.Required.Error(usernameIsRequired),
+			validation.Length(5, 30).Error(nameLength),
+		),
+		validation.Field(&a.Password,
+			validation.Required.Error(passwordIsRequired),
+			validation.Length(5, 30).Error(nameLength),
+		),
+	)
+}

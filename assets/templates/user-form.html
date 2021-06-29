@@ -7,22 +7,32 @@
 <form action="/user/create"  method="post">
   {{.CSRFField}}
 
-    <label for="first_name" name="FirstName">First Name:</label><br>
+    <label name="FirstName">First Name:</label><br>
     <input type="text" name="FirstName"><br>
+   {{with .FormErrors.FirstName}}
+            <p>{{.}}</p>
+           {{end}} 
 
-    <label for="first_name" name="LastName">LastName:</label><br>
+    <label name="LastName">LastName:</label><br>
     <input type="text" name="LastName"><br>
-
-    <label for="first_name" name="Username">Username:</label><br>
+   {{with .FormErrors.LastName}}
+            <p>{{.}}</p>
+           {{end}} 
+    <label name="Username">Username:</label><br>
     <input type="text" name="Username"><br>
-
-    <label for="first_name" name="Email">Email:</label><br>
+   {{with .FormErrors.Username}}
+            <p>{{.}}</p>
+           {{end}} 
+    <label name="Email">Email:</label><br>
     <input type="text"  name="Email" ><br>
-    {{with .FormErrors.NumberOfGuest}}<p>{{.}}</p>{{end}}
-
-    <label for="first_name" name="Password">Password:</label><br>
+   {{with .FormErrors.Email}}
+            <p>{{.}}</p>
+           {{end}} 
+    <label name="Password">Password:</label><br>
     <input type="password"  name="Password"><br>
-    {{with .FormErrors.PerPersonPrice}}<p>{{.}}</p>{{end}}
+   {{with .FormErrors.Password}}
+            <p>{{.}}</p>
+           {{end}} 
     
     <input type="submit" value="Submit">
 

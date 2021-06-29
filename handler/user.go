@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 
+	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/gorilla/csrf"
 )
 
@@ -65,29 +66,38 @@ func (s *Server) saveUser(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		log.Fatalln("Parsing error")
 	}
-
+	// decode form data
 	var form storage.User
 	if err := s.decoder.Decode(&form, r.PostForm); err != nil {
 		log.Fatalln("Decoding error")
 	}
-	fmt.Printf("%#v", form)
-	if form.FirstName == "" {
+	// validation
+	if err := form.Validate(); err != nil {
+		vErrs := map[string]string{}
+		if e, ok := err.(validation.Errors); ok {
+			if len(e) > 0 {
+				for key, value := range e {
+					vErrs[key] = value.Error()
+				}
+			}
+		}
+
 		data := UserFormData{
-			CSRFField: csrf.TemplateField(r),
-			Form:      form,
-			FormErrors: map[string]string{
-				"FirstName": "First Name is required.",
-			},
+			CSRFField:  csrf.TemplateField(r),
+			Form:       form,
+			FormErrors: vErrs,
 		}
 		s.loadUserTemplate(w, r, data)
+		return
 	}
+	// call database query
 	id, err := s.store.CreateUser(form)
 	if err != nil {
 		log.Fatalln("Unable to save data :", err)
 
 	}
 	fmt.Printf("%#v", id)
-
+	// redirect to rhe user page
 	http.Redirect(w, r, "/user", http.StatusSeeOther)
 }
 

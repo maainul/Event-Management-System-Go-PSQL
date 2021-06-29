@@ -74,7 +74,9 @@ const lastNameRequired = "Last Name is Required"
 const emailIsRequired = "Email is Required"
 const passwordIsRequired = "Email is Required"
 const usernameIsRequired = "User name is Required"
+const eventTypeNameIsRequired = "Event Type name is Required"
 
+// User validation
 func (a User) Validate() error {
 	return validation.ValidateStruct(&a,
 		validation.Field(&a.FirstName,
@@ -98,6 +100,16 @@ func (a User) Validate() error {
 		),
 		validation.Field(&a.Password,
 			validation.Required.Error(passwordIsRequired),
+			validation.Length(5, 30).Error(nameLength),
+		),
+	)
+}
+
+// Event Type Validation
+func (a EventType) Validate() error {
+	return validation.ValidateStruct(&a,
+		validation.Field(&a.EventTypeName,
+			validation.Required.Error(eventTypeNameIsRequired),
 			validation.Length(5, 30).Error(nameLength),
 		),
 	)

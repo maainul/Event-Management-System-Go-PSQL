@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 
+	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/gorilla/csrf"
 )
 
@@ -54,29 +55,40 @@ func (s *Server) saveEventType(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		log.Fatalln("Parsing error")
 	}
-
+	// decode form value
 	var form storage.EventType
 	if err := s.decoder.Decode(&form, r.PostForm); err != nil {
 		log.Fatalln("Decoding error")
 	}
-	fmt.Printf("%#v", form)
-	if form.EventTypeName == "" {
+
+	// validation
+	if err := form.Validate(); err != nil {
+		vErrs := map[string]string{}
+		if e, ok := err.(validation.Errors); ok {
+			if len(e) > 0 {
+				for key, value := range e {
+					vErrs[key] = value.Error()
+				}
+			}
+		}
+
 		data := EventTypeFormData{
-			CSRFField: csrf.TemplateField(r),
-			Form:      form,
-			FormErrors: map[string]string{
-				"EventTypeName": "Event Type name is required.",
-			},
+			CSRFField:  csrf.TemplateField(r),
+			Form:       form,
+			FormErrors: vErrs,
 		}
 		s.loadCreateEventTypeTemplate(w, r, data)
+		return
 	}
+
+	// query to the database
 	id, err := s.store.CreateEventType(form)
 	if err != nil {
 		log.Fatalln("Unable to save data :", err)
 
 	}
 	fmt.Printf("%#v", id)
-
+	// redirect to the event-type page
 	http.Redirect(w, r, "/event-type", http.StatusSeeOther)
 }
 

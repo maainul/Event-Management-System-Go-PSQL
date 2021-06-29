@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 
+	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/gorilla/csrf"
 )
 
@@ -85,16 +86,26 @@ func (s *Server) saveEvent(w http.ResponseWriter, r *http.Request) {
 	if err := s.decoder.Decode(&form, r.Form); err != nil {
 		fmt.Println(err)
 	}
-	if form.EventName == "" || form.NumberOfGuest == 0 || form.PerPersonPrice == 0 || form.EventDate == "" || form.EventStartTime == "" || form.EventEndTime == "" {
+	// validation
+	if err := form.Validate(); err != nil {
+		vErrs := map[string]string{}
+		if e, ok := err.(validation.Errors); ok {
+			if len(e) > 0 {
+				for key, value := range e {
+					vErrs[key] = value.Error()
+				}
+			}
+		}
+
 		data := EventFormData{
-			CSRFField: csrf.TemplateField(r),
-			Form:      form,
-			FormErrors: map[string]string{
-				"EventName": "Event name cannot be null",
-			},
+			CSRFField:  csrf.TemplateField(r),
+			Form:       form,
+			FormErrors: vErrs,
 		}
 		s.loadCreateEventTemplate(w, r, data)
+		return
 	}
+
 	_, err := s.store.CreateEvent(form)
 	if err != nil {
 		log.Fatalln("Unable to save data:", err)

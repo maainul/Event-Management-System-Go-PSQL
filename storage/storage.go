@@ -69,12 +69,20 @@ type (
 )
 
 const nameLength = "Name should be 4 to 30 Characters"
+const addresslength = "Address should be 4 to 30 Characters"
 const firstNameRequired = "First Name is Required"
 const lastNameRequired = "Last Name is Required"
 const emailIsRequired = "Email is Required"
 const passwordIsRequired = "Email is Required"
 const usernameIsRequired = "User name is Required"
 const eventTypeNameIsRequired = "Event Type name is Required"
+const eventNameIsRequired = "Event name is Required"
+const dateIsRequired = "Date is Required"
+const startTimeIsRequired = "Start Time is Required"
+const endTimeIsRequired = "End Time is Required"
+const numberOfGuestIsRequired = "Number of Guest is Required"
+const perPersonIsRequired = "Number of Guest is Required"
+const addressIsRequired = "Address is Required"
 
 // User validation
 func (a User) Validate() error {
@@ -111,6 +119,67 @@ func (a EventType) Validate() error {
 		validation.Field(&a.EventTypeName,
 			validation.Required.Error(eventTypeNameIsRequired),
 			validation.Length(5, 30).Error(nameLength),
+		),
+	)
+}
+
+// Event validation
+func (a Events) Validate() error {
+	return validation.ValidateStruct(&a,
+
+		validation.Field(&a.EventName,
+			validation.Required.Error(eventNameIsRequired),
+			validation.Length(5, 30).Error(nameLength),
+		),
+
+		validation.Field(&a.EventDate,
+			validation.Required.Error(dateIsRequired),
+		),
+
+		validation.Field(&a.EventStartTime,
+			validation.Required.Error(startTimeIsRequired),
+		),
+
+		validation.Field(&a.EventEndTime,
+			validation.Required.Error(endTimeIsRequired),
+		),
+		validation.Field(&a.NumberOfGuest,
+			validation.Required.Error(numberOfGuestIsRequired),
+		),
+		validation.Field(&a.PerPersonPrice,
+			validation.Required.Error(perPersonIsRequired),
+		),
+	)
+}
+
+// User validation
+func (a Speakers) Validate() error {
+	return validation.ValidateStruct(&a,
+		validation.Field(&a.FirstName,
+			validation.Required.Error(firstNameRequired),
+			validation.Length(5, 30).Error(nameLength),
+		),
+
+		validation.Field(&a.LastName,
+			validation.Required.Error(lastNameRequired),
+			validation.Length(5, 30).Error(nameLength),
+		),
+
+		validation.Field(&a.Email,
+			validation.Required.Error(emailIsRequired),
+			validation.Length(5, 30).Error(nameLength),
+		),
+
+		validation.Field(&a.Username,
+			validation.Required.Error(usernameIsRequired),
+			validation.Length(5, 30).Error(nameLength),
+		),
+		validation.Field(&a.Address,
+			validation.Required.Error(addressIsRequired),
+			validation.Length(5, 200).Error(addresslength),
+		),
+		validation.Field(&a.Phone,
+			validation.Required.Error(passwordIsRequired),
 		),
 	)
 }

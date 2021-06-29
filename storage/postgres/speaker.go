@@ -14,3 +14,35 @@ func (s *Storage) GetSpeakers() ([]storage.Speakers, error) {
 	// fmt.Print(et)
 	return speakers_list, nil
 }
+
+const createSpeakerQuery = `
+	INSERT INTO speakers(
+		first_name,
+		last_name,
+		phone,
+		username,
+		email,
+		address
+	)
+	VALUES(
+		:first_name,
+		:last_name,
+		:phone,
+		:username,
+		:email,
+		:address
+	)
+	RETURNING id
+	`
+
+func (s *Storage) CreateSpeaker(usr storage.Speakers) (int32, error) {
+	stmt, err := s.db.PrepareNamed(createSpeakerQuery)
+	if err != nil {
+		return 0, err
+	}
+	var id int32
+	if err := stmt.Get(&id, usr); err != nil {
+		return 0, err
+	}
+	return id, nil
+}

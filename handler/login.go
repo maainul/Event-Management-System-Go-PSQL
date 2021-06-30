@@ -67,7 +67,11 @@ func (s *Server) postLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// call database for match email and password
+	/* 	// call database for match email and password
+	   	if err = bcrypt.CompareHashAndPassword([]byte(form.Password), []byte(creds.Password)); err != nil {
+	   		// If the two passwords don't match, return a 401 status
+	   		w.WriteHeader(http.StatusUnauthorized)
+	   	} */
 	emailandPasswordStruct := s.store.GetUserEmailAndPass(form.Email, form.Password)
 	sValue := emailandPasswordStruct.ID //user id
 

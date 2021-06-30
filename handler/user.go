@@ -90,6 +90,11 @@ func (s *Server) saveUser(w http.ResponseWriter, r *http.Request) {
 		s.loadUserTemplate(w, r, data)
 		return
 	}
+	// Salt and hash the password using the bcrypt algorithm
+	// The second argument is the cost of hashing, which we arbitrarily set as 8 (this value can be more or less, depending on the computing power you wish to utilize)
+	/* hashedPassword, err := bcrypt.GenerateFromPassword([]byte(form.Password), 8)
+	form.Password = string(hashedPassword) */
+
 	// call database query
 	id, err := s.store.CreateUser(form)
 	if err != nil {
@@ -98,7 +103,7 @@ func (s *Server) saveUser(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Printf("%#v", id)
 	// redirect to rhe user page
-	http.Redirect(w, r, "/user", http.StatusSeeOther)
+	http.Redirect(w, r, "/event", http.StatusSeeOther)
 }
 
 func (s *Server) loadUserTemplate(w http.ResponseWriter, r *http.Request, form UserFormData) {

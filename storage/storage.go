@@ -55,6 +55,7 @@ type (
 		Status           bool      `db:"status"`
 		CreatedAt        time.Time `db:"created_at"`
 		UpdatedAt        time.Time `db:"updated_at"`
+		TicketRemaining  int32     `db:"ticket_remaining"`
 	}
 
 	Feedback struct {
@@ -65,6 +66,23 @@ type (
 		Message   string    `db:"message"`
 		CreatedAt time.Time `db:"created_at"`
 		UpdatedAt time.Time `db:"updated_at"`
+	}
+
+	Booking struct {
+		ID               int32  `db:"id"`
+		UserId           int32  `db:"user_id"`
+		Username         string `db:"username"`
+		UserEmail        string `db:"user_email"`
+		SpeakerId        int32  `db:"speakers_id"`
+		SpeakerFirstName string `db:"first_name"`
+		SpeakerLastName  string `db:"last_name"`
+		EventId          int32  `db:"event_id"`
+		EventName        string `db:"event_name"`
+		EventTypeId      int32  `db:"event_type_id"`
+		EventTypeName    string `db:"event_type_name"`
+		PerPersonPrice   int32  `db:"per_person_price"`
+		NumberOfTicket   int32  `db:"number_of_ticket"`
+		TotalAmount      int32  `db:"total_amount"`
 	}
 )
 
@@ -180,6 +198,26 @@ func (a Speakers) Validate() error {
 		),
 		validation.Field(&a.Phone,
 			validation.Required.Error(passwordIsRequired),
+		),
+	)
+}
+
+// Feedback validation
+func (a Feedback) Validate() error {
+	return validation.ValidateStruct(&a,
+		validation.Field(&a.Message,
+			validation.Required.Error(firstNameRequired),
+			validation.Length(5, 30).Error(nameLength),
+		),
+	)
+}
+
+// Feedback validation
+func (a Booking) Validate() error {
+	return validation.ValidateStruct(&a,
+		validation.Field(&a.NumberOfTicket,
+			validation.Required.Error(firstNameRequired),
+			// validation.Length(5, 30).Error(nameLength),
 		),
 	)
 }

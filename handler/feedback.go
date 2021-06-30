@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 
+	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/gorilla/csrf"
 )
 
@@ -71,15 +72,24 @@ func (s *Server) saveFeedback(w http.ResponseWriter, r *http.Request) {
 		log.Fatalln("Decoding error")
 	}
 	fmt.Printf("%#v", form)
-	if form.Message == "" {
+	// validation
+	if err := form.Validate(); err != nil {
+		vErrs := map[string]string{}
+		if e, ok := err.(validation.Errors); ok {
+			if len(e) > 0 {
+				for key, value := range e {
+					vErrs[key] = value.Error()
+				}
+			}
+		}
+
 		data := FeedbackFormData{
-			CSRFField: csrf.TemplateField(r),
-			Form:      form,
-			FormErrors: map[string]string{
-				"Message": "Feedback Message is required.",
-			},
+			CSRFField:  csrf.TemplateField(r),
+			Form:       form,
+			FormErrors: vErrs,
 		}
 		s.loadFeedbackTemplate(w, r, data)
+		return
 	}
 	id, err := s.store.CreateFeedback(form)
 	if err != nil {

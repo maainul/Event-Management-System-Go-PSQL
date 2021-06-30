@@ -126,7 +126,6 @@ func (s *Server) loadCreateEventTemplate(w http.ResponseWriter, r *http.Request,
 	sp, err := s.store.GetSpeakers()
 	unableToGetData(err, "Unable to get Speakers")
 	tempData := EventFormData{
-		CSRFField:  "",
 		Form:       storage.Events{},
 		FormErrors: map[string]string{},
 		EventType:  et,

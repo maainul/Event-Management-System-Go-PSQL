@@ -17,7 +17,8 @@ SELECT
 	number_of_guest,
 	per_person_price,
 	first_name,
-	last_name
+	last_name,
+	ticket_remaining
 	   
 FROM 
 	events
@@ -48,7 +49,8 @@ const createEventQuery = `
 		event_start_time,
 		event_end_time,
 		event_type_id,
-		speakers_id
+		speakers_id,
+		ticket_remaining
 	)
 	VALUES(
 		:event_name,
@@ -59,6 +61,7 @@ const createEventQuery = `
 		:event_end_time,
 		:event_type_id,
 		:speakers_id
+		:ticket_remaining
 	)
 	RETURNING id
 	`
@@ -87,6 +90,7 @@ SELECT
 	per_person_price,
 	first_name,
 	last_name,
+	ticket_remaining,
 	status
 	
 FROM events
@@ -120,4 +124,19 @@ func (s *Storage) CountEvent() int32 {
 		log.Println("Unable to ge data")
 	}
 	return count
+}
+
+const dec = `
+UPDATE 
+	events
+SET 
+	ticket_remaining = ticket_remaining - $1
+WHERE 	
+	ticket_remaining > 0 AND id = $2;
+`
+
+func (s *Storage) DecrementRemainingTicketById(id, number_of_ticket int32) (storage.Events, error) {
+	jason := storage.Events{}
+	err := s.db.Get(&jason, dec, number_of_ticket, id)
+	return jason, err
 }

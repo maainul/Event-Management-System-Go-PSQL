@@ -60,12 +60,18 @@ func NewServer(st *postgres.Storage, decoder *schema.Decoder, session *sessions.
 	r.HandleFunc("/feedback/create", s.createFeedback).Methods("GET")
 	r.HandleFunc("/feedback/create", s.saveFeedback).Methods("POST")
 	r.HandleFunc("/user/create", s.createUser).Methods("GET")
+	
 	/* User Create Handler */
 	r.HandleFunc("/user/create", s.saveUser).Methods("POST")
 
 	/* Speakers Handlers User*/
 	r.HandleFunc("/speaker", s.getSpeaker).Methods("GET")
 	r.HandleFunc("/forbidden", s.getForbiddenPage).Methods("GET")
+
+	/* Booking */
+	r.HandleFunc("/booking/create", s.createBooking).Methods("GET")
+	r.HandleFunc("/booking/create", s.saveBooking).Methods("POST")
+	r.HandleFunc("/booking/boucher", s.bookingBoucher).Methods("GET")
 
 	/* Middleware */
 	ar := r.NewRoute().Subrouter()

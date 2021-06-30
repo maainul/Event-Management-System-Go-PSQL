@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>HTML Forms Add Event</h2>
+
+<form action="/booking/create"  method="post">
+  {{.CSRFField}}
+    <label for="ID">Event Name</label><br>
+    <select name="EventId"> 
+        <option value="">-Select-</option>
+        
+        {{range .Event}}
+            <option value="{{.ID}}">{{.EventName}}</option>
+        {{end}}
+
+    </select><br>
+    <label name="NumberOfTicket">Number Of Ticket:</label><br>
+    <input id= "ticket_number" type="text" name="NumberOfTicket" required="required"><br>
+     {{with .FormErrors.NumberOfTicket}}
+            <p>{{.}}</p>
+           {{end}}
+
+    <label name="TotalAmount">Total Calculated Amount:</label><br>
+    <input id= "total_amount" type="text" name="TotalAmount"><br>
+    <input type="submit" value="Submit">
+</form> 
+</body>
+
+</html>

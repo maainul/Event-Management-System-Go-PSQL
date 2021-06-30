@@ -391,3 +391,119 @@ WHERE events.id = 1
 		/* if err := bcrypt.CompareHashAndPassword(hash, []byte(emailandPasswordStruct.Password)); err != nil {
 			log.Fatalf("Password does not match ")
 		} */
+
+// Booking events
+
+
+CREATE TABLE IF NOT EXISTS booking(
+    "id"                    serial,
+    "event_id" 			    INT DEFAULT NULL,
+    "user_id"               INT DEFAULT NULL,
+    "number_of_ticket"      INT,
+    "total_amount"          INT,
+    "created_at"            timestamp default         current_timestamp,
+    "updated_at"            timestamp default         current_timestamp,
+  PRIMARY KEY(id),
+  FOREIGN KEY(event_id) REFERENCES events(id),  
+  FOREIGN KEY(user_id) REFERENCES users(id)
+);
+
+
+UPDATE events
+SET ticket_remaining = ticket_remaining -5
+WHERE ticket_remaining > 0 AND id = 1;
+
+
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>HTML Forms Add Event</h2>
+
+<form action="/booking/create"  method="post">
+  {{.CSRFField}}
+    <label for="ID">Event Name</label><br>
+    <select name="EventId"> 
+        <option value="">-Select-</option>
+        {{range .Event}}
+            <option onclick="sum()" id="per_person_price" price="{{.PerPersonPrice}}" value="{{.ID}}">{{.EventName}}
+                                         
+            </option>
+
+        {{end}}
+    </select><br>
+
+
+    <label name="NumberOfTicket">Number Of Ticket:</label><br>
+    <input id= "ticket_number" type="text" name="NumberOfTicket" oninput="sum()" required="required"><br>
+     {{with .FormErrors.NumberOfTicket}}
+            <p>{{.}}</p>
+           {{end}}
+    <label name="TotalAmount">Total Calculated Amount:</label><br>
+    <input id= "total_amount" type="text" name="TotalAmount" value=""><br>
+    <input type="submit" value="Submit">
+</form> 
+</body>
+<script>
+
+function sum(){
+  var val1 = document.getElementById('per_person_price').price;
+  var val2 = document.getElementById('ticket_number').value;
+  var sum = Number(val1) * Number(val2);
+  console.log(val1);
+  document.getElementById('total_amount').value = sum;
+}
+
+</script>
+</html>
+
+
+
+
+
+
+
+
+ <!DOCTYPE html>
+<html>
+<body>
+
+<h2>HTML Forms Add Event</h2>
+
+<form action="/booking/create"  method="post">
+  {{.CSRFField}}
+    <label >Event Name</label><br>
+    <select name="EventId"  onchange="sum()" id="per_person_price" > 
+        <option value="">-Select-</option>
+        {{range .Event}}
+            <option value="{{.PerPersonPrice}}">{{.EventName}}                      
+            </option>
+
+        {{end}}
+    </select><br>
+
+
+    <label name="NumberOfTicket">Number Of Ticket:</label><br>
+    <input id= "ticket_number" type="text" name="NumberOfTicket" oninput="sum()" required="required"><br>
+     {{with .FormErrors.NumberOfTicket}}
+            <p>{{.}}</p>
+           {{end}}
+    <label name="TotalAmount">Total Calculated Amount:</label><br>
+    <input id= "total_amount" type="text" name="TotalAmount" value=""><br>
+    <input type="submit" value="Submit">
+</form> 
+</body>
+<script>
+
+function sum(){
+
+  // var product_id = attr('product_id');
+  var val1 = document.getElementById('per_person_price').value;
+  var val2 = document.getElementById('ticket_number').value;
+  var sum = Number(val1) * Number(val2);
+  console.log(product_id);
+  document.getElementById('total_amount').value = sum;
+}
+
+</script>
+</html>

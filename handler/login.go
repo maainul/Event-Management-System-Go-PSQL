@@ -73,7 +73,7 @@ func (s *Server) postLogin(w http.ResponseWriter, r *http.Request) {
 	   		w.WriteHeader(http.StatusUnauthorized)
 	   	} */
 	emailandPasswordStruct := s.store.GetUserEmailAndPass(form.Email, form.Password)
-	sValue := emailandPasswordStruct.ID //user id
+	Session_User_ID := emailandPasswordStruct.ID //user id
 
 	if emailandPasswordStruct.Email == "" && emailandPasswordStruct.Password == "" {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
@@ -81,24 +81,25 @@ func (s *Server) postLogin(w http.ResponseWriter, r *http.Request) {
 
 	if emailandPasswordStruct.IsAdmin == true {
 		session, _ := s.session.Get(r, "event_management_app")
-		session.Values["user_id"] = sValue // user id
+		session.Values["user_id"] = Session_User_ID // user id
 		err := session.Save(r, w)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		http.Redirect(w, r, "/auth/admin-home", http.StatusSeeOther)
 		fmt.Println("Admin is true 93")
+		http.Redirect(w, r, "/auth/admin-home", http.StatusSeeOther)
+
 	}
 
 	if emailandPasswordStruct.IsAdmin == false {
 		session, _ := s.session.Get(r, "event_management_app")
-		session.Values["user_id"] = sValue // customized value
+		session.Values["user_id"] = Session_User_ID // customized value
 		if err := session.Save(r, w); err != nil {
 			log.Fatalln("error while saving user id into session")
 		}
 		http.Redirect(w, r, "/event", http.StatusSeeOther)
-		fmt.Println("Admin is true 101")
+		fmt.Println("This is user : hendler/login.go")
 	}
 
 }

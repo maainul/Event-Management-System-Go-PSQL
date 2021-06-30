@@ -15,19 +15,18 @@
     <h3>EventTypeName : {{.EventTypeName}}</h3>
     <h3>Number Of Guest : {{.NumberOfGuest}}</h3>
     <h3>Per Person Price : {{.PerPersonPrice}}</h3>
-    <h3>Speaker First Name : {{.SpeakerFirstName}}</h3>
-    <h3>SpeakerLastName : {{.SpeakerLastName}}</h3>
+    <h3>Speaker Name : {{.SpeakerFirstName}}  {{.SpeakerLastName}}</h3>
     <h3 id="demo"></h3>
-   <script>
+    <h2> Ticket Remaining : {{.TicketRemaining}}</h2>
+    <a href="/booking/create/show?id={{.ID}}" >Book event</a>
+
+<script>
     if ({{.Status}} == true) {
         document.getElementById("demo").innerHTML = "Status = Active";
     }else{
      document.getElementById("demo").innerHTML = "Status = InActive";
     }
 </script>
-
-
-
 
 </body>
 </html>

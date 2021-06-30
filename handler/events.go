@@ -110,7 +110,7 @@ func (s *Server) saveEvent(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatalln("Unable to save data:", err)
 	}
-	http.Redirect(w, r, "/event", http.StatusSeeOther)
+	http.Redirect(w, r, "/auth/event", http.StatusSeeOther)
 
 }
 

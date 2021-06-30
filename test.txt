@@ -507,3 +507,41 @@ function sum(){
 
 </script>
 </html>
+
+
+
+
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>HTML Forms Add Event</h2>
+
+    <h3>Event Date : {{.EventDate}}</h3>
+    <h3>Event Name : {{.EventName}}</h3>
+    <h3>EventStart Time : {{.EventStartTime}}</h3>
+    <h3>Event End Time : {{.EventEndTime}}</h3>
+    <h3>EventTypeName : {{.EventTypeName}}</h3>
+    <h3>Per Person Price : {{.PerPersonPrice}}</h3>
+    <h3>Speaker Name : {{.SpeakerFirstName}}  {{.SpeakerLastName}}</h3>
+    <h3 id="demo"></h3>
+    <h2> Ticket Remaining : {{.TicketRemaining}}</h2>
+
+<form action="/booking/create/show"  method="post">
+   
+    <label name="NumberOfTicket">Number Of Ticket:</label><br>
+    <input type="text" name="NumberOfTicket" required="required"><br>
+     {{with .FormErrors.NumberOfTicket}}
+            <p>{{.}}</p>
+           {{end}}
+
+    <label name="TotalAmount">Total Calculated Amount:</label><br>
+
+    <input id= "total_amount" type="text" name="TotalAmount"><br>
+
+    
+    <input type="submit" value="Submit">
+</form> 
+</body>
+
+</html>

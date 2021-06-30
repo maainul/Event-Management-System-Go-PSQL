@@ -59,9 +59,9 @@ func NewServer(st *postgres.Storage, decoder *schema.Decoder, session *sessions.
 	/* Feedback Handler User*/
 	r.HandleFunc("/feedback/create", s.createFeedback).Methods("GET")
 	r.HandleFunc("/feedback/create", s.saveFeedback).Methods("POST")
-	r.HandleFunc("/user/create", s.createUser).Methods("GET")
-	
+
 	/* User Create Handler */
+	r.HandleFunc("/user/create", s.createUser).Methods("GET")
 	r.HandleFunc("/user/create", s.saveUser).Methods("POST")
 
 	/* Speakers Handlers User*/
@@ -72,32 +72,35 @@ func NewServer(st *postgres.Storage, decoder *schema.Decoder, session *sessions.
 	r.HandleFunc("/booking/create", s.createBooking).Methods("GET")
 	r.HandleFunc("/booking/create", s.saveBooking).Methods("POST")
 	r.HandleFunc("/booking/boucher", s.bookingBoucher).Methods("GET")
+	r.HandleFunc("/booking/create/show", s.createBookingByEventId).Methods("GET")
+	// r.HandleFunc("/booking/create/show", s.s).Methods("POST")
+
+	/*------------------------------------------------AUTHENTICATION----------------------------------*/
+	/* Auth Event Type Handlers */
+	r.HandleFunc("/auth/event-type", s.getEventType).Methods("GET")
+	r.HandleFunc("/auth/event-type/create", s.createEventType).Methods("GET")
+	r.HandleFunc("/auth/event-type/create", s.saveEventType).Methods("POST")
+
+	/* Event ype Handlers */
+	r.HandleFunc("/auth/event", s.authGetEvents).Methods("GET")
+	r.HandleFunc("/auth/event/create", s.createEvent).Methods("GET")
+	r.HandleFunc("/auth/event/create", s.saveEvent).Methods("Post")
+	r.HandleFunc("/auth/event/show", s.eventDetails).Methods("GET")
+
+	/* Feedback Handlers */
+	r.HandleFunc("/auth/feedback", s.getFeedback).Methods("GET")
+
+	/* User Handlers */
+	r.HandleFunc("/auth/user", s.getUser).Methods("GET")
+
+	/* Speaker Handler */
+	r.HandleFunc("/auth/speaker", s.getSpeaker).Methods("GET")
+	r.HandleFunc("/speaker/create", s.createSpeaker).Methods("GET")
+	r.HandleFunc("/speaker/create", s.saveSpeaker).Methods("POST")
 
 	/* Middleware */
 	ar := r.NewRoute().Subrouter()
 	ar.Use(s.authMiddleware)
-
-	/* Auth Event Type Handlers */
-	ar.HandleFunc("/auth/event-type", s.getEventType).Methods("GET")
-	ar.HandleFunc("/auth/event-type/create", s.createEventType).Methods("GET")
-	ar.HandleFunc("/auth/event-type/create", s.saveEventType).Methods("POST")
-
-	/* Event ype Handlers */
-	ar.HandleFunc("/auth/event", s.authGetEvents).Methods("GET")
-	ar.HandleFunc("/auth/event/create", s.createEvent).Methods("GET")
-	ar.HandleFunc("/auth/event/create", s.saveEvent).Methods("Post")
-	ar.HandleFunc("/auth/event/show", s.eventDetails).Methods("GET")
-
-	/* Feedback Handlers */
-	ar.HandleFunc("/auth/feedback", s.getFeedback).Methods("GET")
-
-	/* User Handlers */
-	ar.HandleFunc("/auth/user", s.getUser).Methods("GET")
-
-	/* Speaker Handler */
-	ar.HandleFunc("/auth/speaker", s.getSpeaker).Methods("GET")
-	ar.HandleFunc("/speaker/create", s.createSpeaker).Methods("GET")
-	ar.HandleFunc("/speaker/create", s.saveSpeaker).Methods("POST")
 
 	return r, nil
 }

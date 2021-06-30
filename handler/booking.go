@@ -30,12 +30,12 @@ func (s *Server) createBooking(w http.ResponseWriter, r *http.Request) {
 
 // Save booking with Event Id
 func (s *Server) saveBooking(w http.ResponseWriter, r *http.Request) {
-	// parse form data : see utility.go
 	ParseFormData(r)
-	// Create Struct for store form value
 	var form storage.Booking
-	// Decode data
-	DecodeFormData(s, form, r)
+
+	if err := s.decoder.Decode(&form, r.PostForm); err != nil {
+		log.Fatalln("Decoding error")
+	}
 	// GET EVENT ID
 	// covert int32---->int---->string
 	id := form.EventId

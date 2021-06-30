@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>HTML Forms for booking</h2>
+
+<form action="/booking/show/create"  method="post">
+    <label for="ID">Event Name</label><br>
+    <input type="text" value="{{.SingleEvent.EventName}}"><br>
+
+    <label name="NumberOfTicket">Number Of Ticket:</label><br>
+
+    <input id= "ticket_number" type="text" name="NumberOfTicket" required="required"><br>
+    <label name="TotalAmount">Total Calculated Amount:</label><br>
+
+    <input id= "total_amount" type="text" name="TotalAmount"><br>
+
+    <input type="submit" value="Submit">
+
+</form> 
+</body>
+
+</html>

@@ -60,7 +60,7 @@ const createEventQuery = `
 		:event_start_time,
 		:event_end_time,
 		:event_type_id,
-		:speakers_id
+		:speakers_id,
 		:ticket_remaining
 	)
 	RETURNING id

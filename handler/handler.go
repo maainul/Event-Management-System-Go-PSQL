@@ -95,8 +95,8 @@ func NewServer(st *postgres.Storage, decoder *schema.Decoder, session *sessions.
 
 	/* Speaker Handler */
 	r.HandleFunc("/auth/speaker", s.getSpeaker).Methods("GET")
-	r.HandleFunc("/speaker/create", s.createSpeaker).Methods("GET")
-	r.HandleFunc("/speaker/create", s.saveSpeaker).Methods("POST")
+	r.HandleFunc("/auth/speaker/create", s.createSpeaker).Methods("GET")
+	r.HandleFunc("/auth/speaker/create", s.saveSpeaker).Methods("POST")
 
 	/* Middleware */
 	ar := r.NewRoute().Subrouter()

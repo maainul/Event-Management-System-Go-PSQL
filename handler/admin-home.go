@@ -6,17 +6,13 @@ import (
 
 func (s *Server) getAdminHomePage(w http.ResponseWriter, r *http.Request) {
 
-	tmp, result := s.loadTemplate("admin-home.html")
-	if result {
-		return
-	}
+	tmp := s.templates.Lookup("admin-home.html")
+	UnableToFindHtmlTemplate(tmp)
 	et, err := s.store.GetEvent()
-	unableToGetData(err, "Unable to Get Event Data")
+	UnableToGetData(err)
 	tempData := events{
 		Events: et,
 	}
-	res := execute(tmp, w, tempData)
-	if res {
-		return
-	}
+	err = tmp.Execute( w, tempData)
+	ExcutionTemplateError(err)
 }

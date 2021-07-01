@@ -47,7 +47,6 @@ func (s *Server) createUser(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) saveUser(w http.ResponseWriter, r *http.Request) {
 	ParseFormData(r)
-	// decode form data
 	var creds storage.User
 	if err := s.decoder.Decode(&creds, r.PostForm); err != nil {
 		log.Fatalln("Decoding error")
@@ -69,12 +68,10 @@ func (s *Server) saveUser(w http.ResponseWriter, r *http.Request) {
 		s.loadUserTemplate(w, r, data)
 		return
 	}
-	// Salt and hash the password using the bcrypt algorithm
-	// The second argument is the cost of hashing, which we arbitrarily set as 8
-	// (this value can be more or less, depending on the computing power you wish to utilize)
-	// validation
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(creds.Password), 8)
-	creds.Password = string(hashedPassword)
+
+	pass := creds.Password
+	hashed, err := HashAndSalt(pass)
+	creds.Password = hashed
 	_, err = s.store.CreateUser(creds)
 	UnableToInsertData(err)
 	http.Redirect(w, r, "/event", http.StatusSeeOther)
@@ -85,4 +82,14 @@ func (s *Server) loadUserTemplate(w http.ResponseWriter, r *http.Request, form U
 	UnableToFindHtmlTemplate(tmpl)
 	err := tmpl.Execute(w, form)
 	ExcutionTemplateError(err)
+}
+
+/*----------------------------------------------------Hash and Salt------------------------------*/
+func HashAndSalt(password string) (string, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), 8)
+	if err != nil {
+		return "", err
+	}
+	return string(hash), nil
+
 }

@@ -49,6 +49,7 @@ func (s *Server) saveFeedback(w http.ResponseWriter, r *http.Request) {
 	if err := s.decoder.Decode(&form, r.PostForm); err != nil {
 		log.Fatalln("Decoding error")
 	}
+	// uid := session.Values["user_id"]
 	form.UserId = 1
 	// validation
 	if err := form.Validate(); err != nil {

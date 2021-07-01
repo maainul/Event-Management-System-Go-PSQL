@@ -61,8 +61,6 @@ func NewServer(st *postgres.Storage, decoder *schema.Decoder, session *sessions.
 	/* Event Type Handlers User */
 	r.HandleFunc("/event-type", s.getEventType).Methods("GET")
 
-	r.HandleFunc("/speaker", s.getSpeaker).Methods("GET")
-
 	/*------------------------------------------------USER AUTHENTICATION----------------------------------*/
 
 	ur := r.NewRoute().Subrouter()
@@ -86,7 +84,7 @@ func NewServer(st *postgres.Storage, decoder *schema.Decoder, session *sessions.
 	ar.HandleFunc("/auth/admin-home", s.getAdminHomePage).Methods("GET")
 
 	/* Auth Event Type Handlers */
-	/* r.HandleFunc("/auth/event-type", s.getEventType).Methods("GET") */
+	ar.HandleFunc("/auth/event-type", s.getEventType).Methods("GET")
 	ar.HandleFunc("/auth/event-type/create", s.createEventType).Methods("GET")
 	ar.HandleFunc("/auth/event-type/create", s.saveEventType).Methods("POST")
 
@@ -94,7 +92,7 @@ func NewServer(st *postgres.Storage, decoder *schema.Decoder, session *sessions.
 	ar.HandleFunc("/auth/event", s.authGetEvents).Methods("GET")
 	ar.HandleFunc("/auth/event/create", s.createEvent).Methods("GET")
 	ar.HandleFunc("/auth/event/create", s.saveEvent).Methods("Post")
-	/* ar.HandleFunc("/auth/event/show", s.eventDetails).Methods("GET") */
+    ar.HandleFunc("/auth/event/show", s.eventDetails).Methods("GET")
 
 	/* Feedback Handlers */
 	ar.HandleFunc("/auth/feedback", s.getFeedback).Methods("GET")
@@ -103,7 +101,6 @@ func NewServer(st *postgres.Storage, decoder *schema.Decoder, session *sessions.
 	ar.HandleFunc("/auth/user", s.getUser).Methods("GET")
 
 	/* Speaker Handler */
-
 	ar.HandleFunc("/auth/speaker/create", s.createSpeaker).Methods("GET")
 	ar.HandleFunc("/auth/speaker/create", s.saveSpeaker).Methods("POST")
 
@@ -131,38 +128,28 @@ func (s *Server) parseTemplates() error {
 	return nil
 }
 
-/*------------------------------------------------USER AUTHENTICATION FUNCTION----------------------------------*/
+/*------------------------------------------------ADMIN AUTHENTICATION MIDDLEWARE-----------------------------------*/
 func (s *Server) adminAuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		session, _ := s.session.Get(r, "event_management_system")
-		value := session.Values["user_id"]
-		user_type := session.Values["is_admin"]
-		if _, ok := value.(string); ok {
-			if user_type == "true" {
-				next.ServeHTTP(w, r)
-			}
-		} else {
-			//http.Error(w, "Forbidden", http.StatusForbidden)
-			http.Redirect(w, r, "/forbidden", http.StatusSeeOther)
-		}
+		SessionCheckAndRedirect(s, r, next, w, true)
 	})
 }
 
-/*------------------------------------------------ADMIN AUTHENTICATION FUNCTION----------------------------------*/
+/*------------------------------------------------USER AUTHENTICATION MIDDLEWARE----------------------------------*/
 func (s *Server) userAuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		session, _ := s.session.Get(r, "event_management_system")
-
-		value := session.Values["user_id"]
-		user_type := session.Values["is_admin"]
-
-		if _, ok := value.(string); ok {
-			if user_type == "false" {
-				next.ServeHTTP(w, r)
-			}
-		} else {
-			//http.Error(w, "Forbidden", http.StatusForbidden)
-			http.Redirect(w, r, "/forbidden", http.StatusSeeOther)
-		}
+		SessionCheckAndRedirect(s, r, next, w, false)
 	})
+}
+
+/*------------------------------------------------Session Information Checker ----------------------------------*/
+func SessionCheckAndRedirect(s *Server, r *http.Request, next http.Handler, w http.ResponseWriter, user bool) {
+	session, _ := s.session.Get(r, "event_management_app")
+	uid := session.Values["user_id"]
+	user_type := session.Values["is_admin"]
+	if uid != "" && user_type == user {
+		next.ServeHTTP(w, r)
+	} else {
+		http.Redirect(w, r, "/forbidden", http.StatusSeeOther)
+	}
 }

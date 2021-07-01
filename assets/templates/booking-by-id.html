@@ -15,25 +15,24 @@
     <label for="ID">Per Person Price</label><br>
     <input type="text" id="per_person_price"value="{{.SingleEvent.PerPersonPrice}}" ><br>    
     
-
-    <label for="ID">Event ID</label><br>
-    <input type="text" value="{{.SingleEvent.ID}}" name="EventId"><br>
+    <input type="hidden" value="{{.SingleEvent.ID}}" name="EventId"><br>
 
     <label name="NumberOfTicket">Number Of Ticket:</label><br>
 
     <input id= "ticket_number" type="text" name="NumberOfTicket" oninput="sum()" required="required"><br>
-    
+
     <label name="TotalAmount">Total Calculated Amount:</label><br>
 
     <input id= "total_amount" type="text" name="TotalAmount"><br>
 
-    <input type="submit" value="Submit">
+    <input type="submit" value="Submit" >
 
 </form> 
 </body>
 
 <script>
 
+// Calculte total number of ticket price
 function sum(){
   var val1 = document.getElementById('per_person_price').value;
   var val2 = document.getElementById('ticket_number').value;

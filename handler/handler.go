@@ -45,8 +45,13 @@ func NewServer(st *postgres.Storage, decoder *schema.Decoder, session *sessions.
 	r.HandleFunc("/login", s.postLogin).Methods("POST")
 	r.HandleFunc("/logout", s.logout).Methods("GET")
 
-	/* Admin Home  Handler */
-	r.HandleFunc("/auth/admin-home", s.getAdminHomePage).Methods("GET")
+	/* User Create Handler */
+	r.HandleFunc("/user/create", s.createUser).Methods("GET")
+	r.HandleFunc("/user/create", s.saveUser).Methods("POST")
+
+	/* Speakers Handlers User*/
+	r.HandleFunc("/speaker", s.getSpeaker).Methods("GET")
+	r.HandleFunc("/forbidden", s.getForbiddenPage).Methods("GET")
 
 	/* Event Handlers User */
 	r.HandleFunc("/event", s.getEvents).Methods("GET")
@@ -56,53 +61,51 @@ func NewServer(st *postgres.Storage, decoder *schema.Decoder, session *sessions.
 	/* Event Type Handlers User */
 	r.HandleFunc("/event-type", s.getEventType).Methods("GET")
 
-	/* Feedback Handler User*/
-	r.HandleFunc("/feedback/create", s.createFeedback).Methods("GET")
-	r.HandleFunc("/feedback/create", s.saveFeedback).Methods("POST")
-
-	/* User Create Handler */
-	r.HandleFunc("/user/create", s.createUser).Methods("GET")
-	r.HandleFunc("/user/create", s.saveUser).Methods("POST")
-
-	/* Speakers Handlers User*/
 	r.HandleFunc("/speaker", s.getSpeaker).Methods("GET")
-	r.HandleFunc("/forbidden", s.getForbiddenPage).Methods("GET")
 
-	/* Booking With Event Drop down*/
-	r.HandleFunc("/booking/create", s.createBooking).Methods("GET")
-	r.HandleFunc("/booking/create", s.saveBooking).Methods("POST")
+	/*------------------------------------------------USER AUTHENTICATION----------------------------------*/
+
+	ur := r.NewRoute().Subrouter()
+	ur.Use(s.userAuthMiddleware)
+
+	/* Feedback Handler User*/
+	ur.HandleFunc("/feedback/create", s.createFeedback).Methods("GET")
+	ur.HandleFunc("/feedback/create", s.saveFeedback).Methods("POST")
 
 	/* Booking From Events Details*/
-	r.HandleFunc("/booking/show", s.createBookingByEventId).Methods("GET")
-	r.HandleFunc("/booking/show/create", s.saveBookingByEventId).Methods("POST")
+	ur.HandleFunc("/booking/show", s.createBookingByEventId).Methods("GET")
+	ur.HandleFunc("/booking/show/create", s.saveBookingByEventId).Methods("POST")
 
-	r.HandleFunc("/booking/boucher", s.bookingBoucher).Methods("GET")
-	/*------------------------------------------------AUTHENTICATION----------------------------------*/
+	ur.HandleFunc("/booking/boucher", s.bookingBoucher).Methods("GET")
+
+	/*------------------------------------------------ADMIN AUTHENTICATION----------------------------------*/
+	ar := r.NewRoute().Subrouter()
+	ar.Use(s.adminAuthMiddleware)
+
+	/* Admin Home  Handler */
+	ar.HandleFunc("/auth/admin-home", s.getAdminHomePage).Methods("GET")
+
 	/* Auth Event Type Handlers */
-	r.HandleFunc("/auth/event-type", s.getEventType).Methods("GET")
-	r.HandleFunc("/auth/event-type/create", s.createEventType).Methods("GET")
-	r.HandleFunc("/auth/event-type/create", s.saveEventType).Methods("POST")
+	/* r.HandleFunc("/auth/event-type", s.getEventType).Methods("GET") */
+	ar.HandleFunc("/auth/event-type/create", s.createEventType).Methods("GET")
+	ar.HandleFunc("/auth/event-type/create", s.saveEventType).Methods("POST")
 
 	/* Event ype Handlers */
-	r.HandleFunc("/auth/event", s.authGetEvents).Methods("GET")
-	r.HandleFunc("/auth/event/create", s.createEvent).Methods("GET")
-	r.HandleFunc("/auth/event/create", s.saveEvent).Methods("Post")
-	r.HandleFunc("/auth/event/show", s.eventDetails).Methods("GET")
+	ar.HandleFunc("/auth/event", s.authGetEvents).Methods("GET")
+	ar.HandleFunc("/auth/event/create", s.createEvent).Methods("GET")
+	ar.HandleFunc("/auth/event/create", s.saveEvent).Methods("Post")
+	/* ar.HandleFunc("/auth/event/show", s.eventDetails).Methods("GET") */
 
 	/* Feedback Handlers */
-	r.HandleFunc("/auth/feedback", s.getFeedback).Methods("GET")
+	ar.HandleFunc("/auth/feedback", s.getFeedback).Methods("GET")
 
 	/* User Handlers */
-	r.HandleFunc("/auth/user", s.getUser).Methods("GET")
+	ar.HandleFunc("/auth/user", s.getUser).Methods("GET")
 
 	/* Speaker Handler */
-	r.HandleFunc("/auth/speaker", s.getSpeaker).Methods("GET")
-	r.HandleFunc("/auth/speaker/create", s.createSpeaker).Methods("GET")
-	r.HandleFunc("/auth/speaker/create", s.saveSpeaker).Methods("POST")
 
-	/* Middleware */
-	ar := r.NewRoute().Subrouter()
-	ar.Use(s.authMiddleware)
+	ar.HandleFunc("/auth/speaker/create", s.createSpeaker).Methods("GET")
+	ar.HandleFunc("/auth/speaker/create", s.saveSpeaker).Methods("POST")
 
 	return r, nil
 }
@@ -128,12 +131,35 @@ func (s *Server) parseTemplates() error {
 	return nil
 }
 
-func (s *Server) authMiddleware(next http.Handler) http.Handler {
+/*------------------------------------------------USER AUTHENTICATION FUNCTION----------------------------------*/
+func (s *Server) adminAuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		session, _ := s.session.Get(r, "event_management_system")
 		value := session.Values["user_id"]
+		user_type := session.Values["is_admin"]
 		if _, ok := value.(string); ok {
-			next.ServeHTTP(w, r)
+			if user_type == "true" {
+				next.ServeHTTP(w, r)
+			}
+		} else {
+			//http.Error(w, "Forbidden", http.StatusForbidden)
+			http.Redirect(w, r, "/forbidden", http.StatusSeeOther)
+		}
+	})
+}
+
+/*------------------------------------------------ADMIN AUTHENTICATION FUNCTION----------------------------------*/
+func (s *Server) userAuthMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		session, _ := s.session.Get(r, "event_management_system")
+
+		value := session.Values["user_id"]
+		user_type := session.Values["is_admin"]
+
+		if _, ok := value.(string); ok {
+			if user_type == "false" {
+				next.ServeHTTP(w, r)
+			}
 		} else {
 			//http.Error(w, "Forbidden", http.StatusForbidden)
 			http.Redirect(w, r, "/forbidden", http.StatusSeeOther)

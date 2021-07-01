@@ -36,7 +36,7 @@ func (s *Server) getEvents(w http.ResponseWriter, r *http.Request) {
 	tempData := events{
 		Events: et,
 	}
-	err =  tmp.Execute(w, tempData)
+	err = tmp.Execute(w, tempData)
 }
 
 /*--------------------------------------------------GET EVENT BY ADMIN ------------------------------------*/
@@ -51,7 +51,6 @@ func (s *Server) authGetEvents(w http.ResponseWriter, r *http.Request) {
 		CountAllEvent: ce,
 	}
 	tempData.CountAllEvent = ce
-
 	err = tmp.Execute(w, tempData)
 	ExcutionTemplateError(err)
 

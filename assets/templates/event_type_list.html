@@ -1,45 +1,79 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Create Book</title>
-    <style>
-        html, body, p {
-            padding: 0;
-            border: 0;
-            margin: 0;
-        }
-        body {
-            display: flex;
-            flex-flow: column nowrap;
-            justify-content: center;
-            align-items: left;
-            height: 100vh;
-        }
-        p {
-            margin-left: 4rem;
-            font-size: 2rem;
-            color: black;
-          }
-        .link {
-            font-size: 1rem;
-        }
-    </style>
+<style>
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+}
+
+li {
+  float: left;
+}
+
+li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+li a:hover:not(.active) {
+  background-color: #111;
+}
+
+.active {
+  background-color: #04AA6D;
+}
+// ----------------------Table CSS--------------
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
 </head>
 <body>
 
-<p>
-   
+<ul>
+  <li><a href="#home">Home</a></li>
+  <li><a href="/event">Event</a></li>
+  <li><a href="/event-type">Event-Type</a></li>
+  <li><a href="/feedback/create">Feedback</a></li>
+  <li><a href="/user/create">User Registration</a></li>
+  <li><a href="/speaker">Speaker List</a></li>
+  <li style="float:right"><a class="active" href="/login">Login</a></li>
+  <li style="float:right"><a class="active" href="/logout">Logout</a></li>
+</ul>
+
+<h2>Event Type List Table</h2>
+<table>
+<tr>
+        <th>Event Type</th>
+       
+  </tr>
   {{range .EventType}}
-    
-    <p> {{.EventTypeName}}  </p>
-
+    <tr>
+        <td>{{.EventTypeName}}</td>
+      
+    </tr>
   {{end}}
-
- </p>
-
-
-
+</table>
 
 </body>
+
 </html>

@@ -8,6 +8,7 @@ import (
 
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/gorilla/csrf"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type (
@@ -47,12 +48,14 @@ func (s *Server) createUser(w http.ResponseWriter, r *http.Request) {
 func (s *Server) saveUser(w http.ResponseWriter, r *http.Request) {
 	ParseFormData(r)
 	// decode form data
-	var form storage.User
-	if err := s.decoder.Decode(&form, r.PostForm); err != nil {
+	var creds storage.User
+	if err := s.decoder.Decode(&creds, r.PostForm); err != nil {
 		log.Fatalln("Decoding error")
 	}
+	// Salt and hash the password using the bcrypt algorithm
+	// The second argument is the cost of hashing, which we arbitrarily set as 8 (this value can be more or less, depending on the computing power you wish to utilize)
 	// validation
-	if err := form.Validate(); err != nil {
+	if err := creds.Validate(); err != nil {
 		vErrs := map[string]string{}
 		if e, ok := err.(validation.Errors); ok {
 			if len(e) > 0 {
@@ -64,19 +67,15 @@ func (s *Server) saveUser(w http.ResponseWriter, r *http.Request) {
 
 		data := UserFormData{
 			CSRFField:  csrf.TemplateField(r),
-			Form:       form,
+			Form:       creds,
 			FormErrors: vErrs,
 		}
 		s.loadUserTemplate(w, r, data)
 		return
 	}
-	// Salt and hash the password using the bcrypt algorithm
-	// The second argument is the cost of hashing, which we arbitrarily set as 8 (this value can be more or less, depending on the computing power you wish to utilize)
-	/* hashedPassword, err := bcrypt.GenerateFromPassword([]byte(form.Password), 8)
-	form.Password = string(hashedPassword) */
-
-	// call database query
-	_, err := s.store.CreateUser(form)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(creds.Password), 8)
+	creds.Password = string(hashedPassword)
+	_, err = s.store.CreateUser(creds)
 	UnableToInsertData(err)
 	http.Redirect(w, r, "/event", http.StatusSeeOther)
 }

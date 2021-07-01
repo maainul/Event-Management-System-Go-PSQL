@@ -39,11 +39,7 @@ func (s *Server) getLogin(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) postLogin(w http.ResponseWriter, r *http.Request) {
 	log.Println("Method: postLogin")
-	// pase login information
-	if err := r.ParseForm(); err != nil {
-		log.Fatalln("parsing error")
-	}
-
+	ParseFormData(r)
 	var form Login
 	if err := s.decoder.Decode(&form, r.PostForm); err != nil {
 		log.Fatalln("decoding error")
@@ -74,6 +70,7 @@ func (s *Server) postLogin(w http.ResponseWriter, r *http.Request) {
 	   	} */
 	emailandPasswordStruct := s.store.GetUserEmailAndPass(form.Email, form.Password)
 	Session_User_ID := emailandPasswordStruct.ID //user id
+	Session_Is_Admin := emailandPasswordStruct.IsAdmin
 
 	if emailandPasswordStruct.Email == "" && emailandPasswordStruct.Password == "" {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
@@ -81,24 +78,26 @@ func (s *Server) postLogin(w http.ResponseWriter, r *http.Request) {
 
 	if emailandPasswordStruct.IsAdmin == true {
 		session, _ := s.session.Get(r, "event_management_app")
-		session.Values["user_id"] = Session_User_ID // user id
+		session.Values["user_id"] = Session_User_ID
+		session.Values["is_admin"] = Session_Is_Admin
 		err := session.Save(r, w)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		fmt.Println("Admin is true 93")
-		http.Redirect(w, r, "/auth/admin-home", http.StatusSeeOther)
-
+		fmt.Println("Your are Admin")
+		http.Redirect(w, r, "/auth/admin-home", http.StatusSeeOther) // admin
 	}
 
 	if emailandPasswordStruct.IsAdmin == false {
 		session, _ := s.session.Get(r, "event_management_app")
-		session.Values["user_id"] = Session_User_ID // customized value
+		session.Values["user_id"] = Session_User_ID
+		session.Values["is_admin"] = Session_Is_Admin
 		if err := session.Save(r, w); err != nil {
 			log.Fatalln("error while saving user id into session")
 		}
-		http.Redirect(w, r, "/event", http.StatusSeeOther)
+		fmt.Println("You are user")
+		http.Redirect(w, r, "/event", http.StatusSeeOther) // user index
 		fmt.Println("This is user : hendler/login.go")
 	}
 
@@ -107,14 +106,14 @@ func (s *Server) postLogin(w http.ResponseWriter, r *http.Request) {
 func (s *Server) logout(w http.ResponseWriter, r *http.Request) {
 	session, _ := s.session.Get(r, "event_management_app")
 	session.Values["user_id"] = 0
+	session.Values["is_admin"] = false
+
 	session.Save(r, w)
 	http.Redirect(w, r, "/event", http.StatusSeeOther)
 }
 
 func (s *Server) loadLoginTemplate(w http.ResponseWriter, r *http.Request, form LoginTempData) {
 	tmp := s.templates.Lookup("login.html")
-	if err := tmp.Execute(w, form); err != nil {
-		log.Println("Error executing template :", err)
-		return
-	}
+	err := tmp.Execute(w, form)
+	ExcutionTemplateError(err)
 }

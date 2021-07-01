@@ -68,13 +68,15 @@ func NewServer(st *postgres.Storage, decoder *schema.Decoder, session *sessions.
 	r.HandleFunc("/speaker", s.getSpeaker).Methods("GET")
 	r.HandleFunc("/forbidden", s.getForbiddenPage).Methods("GET")
 
-	/* Booking */
+	/* Booking With Event Drop down*/
 	r.HandleFunc("/booking/create", s.createBooking).Methods("GET")
 	r.HandleFunc("/booking/create", s.saveBooking).Methods("POST")
-	r.HandleFunc("/booking/boucher", s.bookingBoucher).Methods("GET")
-	r.HandleFunc("/booking/create/show", s.createBookingByEventId).Methods("GET")
-	// r.HandleFunc("/booking/create/show", s.s).Methods("POST")
 
+	/* Booking From Events Details*/
+	r.HandleFunc("/booking/show", s.createBookingByEventId).Methods("GET")
+	r.HandleFunc("/booking/show/create", s.saveBookingByEventId).Methods("POST")
+
+	r.HandleFunc("/booking/boucher", s.bookingBoucher).Methods("GET")
 	/*------------------------------------------------AUTHENTICATION----------------------------------*/
 	/* Auth Event Type Handlers */
 	r.HandleFunc("/auth/event-type", s.getEventType).Methods("GET")

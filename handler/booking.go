@@ -19,7 +19,7 @@ type BookingFormData struct {
 	SingleEvent storage.Events
 }
 
-// Booking form with Some Event information
+/*-----------------------------------------------------------------------------GET : Booking form With Event Id/Show Booking Form----------------------------------------------*/
 func (s *Server) createBooking(w http.ResponseWriter, r *http.Request) {
 	log.Println("Booking : Create Method")
 	data := BookingFormData{
@@ -28,23 +28,17 @@ func (s *Server) createBooking(w http.ResponseWriter, r *http.Request) {
 	s.loadBookingTemplate(w, r, data)
 }
 
-// Save booking with Event Id
+/*--------------------------------------------------------------------------------POST : Save Booking With DropDown of Event----------------------------------------------*/
 func (s *Server) saveBooking(w http.ResponseWriter, r *http.Request) {
 	ParseFormData(r)
 	var form storage.Booking
-
 	if err := s.decoder.Decode(&form, r.PostForm); err != nil {
 		log.Fatalln("Decoding error")
 	}
-	// GET EVENT ID
-	// covert int32---->int---->string
 	id := form.EventId
 	t := IntToStringConversion(id)
-	// Search EVENT by id for matching price and seat amount
 	et, err := s.store.GetDataById(t)
-	// log message if data not found
 	UnableToGetData(err)
-	// total ticket price = ticket price *number of ticket
 	form.TotalAmount = form.NumberOfTicket * et.PerPersonPrice
 	form.UserId = 1
 	// decrement value as user's input
@@ -67,13 +61,12 @@ func (s *Server) saveBooking(w http.ResponseWriter, r *http.Request) {
 		s.loadBookingTemplate(w, r, data)
 		return
 	}
-	fmt.Println("83 line pass")
 	_, err = s.store.CreateBooking(form)
 	fmt.Println("85 line pass")
-	UnableToInsertData(err)
 	http.Redirect(w, r, "/booking/boucher", http.StatusSeeOther)
 }
 
+/*------------------------------------------------------------------------------Booking Information/ Boucher/Invoice of Booking---------------------------------------------*/
 func (s *Server) bookingBoucher(w http.ResponseWriter, r *http.Request) {
 	tmpl := s.templates.Lookup("boucher.html")
 	UnableToFindHtmlTemplate(tmpl)
@@ -81,6 +74,8 @@ func (s *Server) bookingBoucher(w http.ResponseWriter, r *http.Request) {
 	ExcutionTemplateError(err)
 
 }
+
+/*--------------------------------------------------------------------------------Load booking template with Dropdown of Event----------------------------------------------*/
 
 func (s *Server) loadBookingTemplate(w http.ResponseWriter, r *http.Request, form BookingFormData) {
 	tmpl := s.templates.Lookup("booking-form.html")
@@ -92,12 +87,11 @@ func (s *Server) loadBookingTemplate(w http.ResponseWriter, r *http.Request, for
 		FormErrors: map[string]string{},
 		Event:      ev,
 	}
-
 	err = tmpl.Execute(w, tempData)
 	ExcutionTemplateError(err)
 }
 
-// Booking form With Event Id
+/*-----------------------------------------------------------------------Booking form With Event Id From Event Details Page---------------------------------------*/
 func (s *Server) createBookingByEventId(w http.ResponseWriter, r *http.Request) {
 	log.Println("Booking : Create Method")
 	data := BookingFormData{
@@ -107,7 +101,7 @@ func (s *Server) createBookingByEventId(w http.ResponseWriter, r *http.Request) 
 	s.loadBookingTemplateByEventId(w, r, data, id)
 }
 
-// Load form with Event id
+/*--------------------------------------------------------------------------------Load Booking form With Event Id----------------------------------------------*/
 func (s *Server) loadBookingTemplateByEventId(w http.ResponseWriter, r *http.Request, form BookingFormData, id string) {
 	tmpl := s.templates.Lookup("booking-by-id.html")
 	UnableToFindHtmlTemplate(tmpl)
@@ -118,68 +112,23 @@ func (s *Server) loadBookingTemplateByEventId(w http.ResponseWriter, r *http.Req
 		FormErrors:  map[string]string{},
 		SingleEvent: ev,
 	}
-	fmt.Println("Booking Form data  Single event = ", ev)
 	err = tmpl.Execute(w, tempData)
 	ExcutionTemplateError(err)
 }
 
-/* // Booking form
-func (s *Server) bookingEventByEventId(w http.ResponseWriter, r *http.Request) {
-	log.Println("Method : booking event called")
-	tempData := BookingFormData{
-		CSRFField: csrf.TemplateField(r),
-	}
-	tmpl := s.templates.Lookup("booking-by-id.html")
-	if tmpl == nil {
-		log.Println("Unable to find Booking form")
-	}
+/*--------------------------------------------------------------------------------Lode Booking form With Event Id----------------------------------------------*/
 
-	id := r.FormValue("id")
-	if id == "" {
-		log.Println("Not found.")
-	}
-
-	et, err := s.store.GetDataById(id)
-
-	tempData = BookingFormData{
-		Form:        storage.Booking{},
-		FormErrors:  map[string]string{},
-		SingleEvent: et,
-	}
-	err = tmpl.Execute(w, tempData)
-
-	if err != nil {
-		log.Println("Error executing template:", err)
-	}
-} */
-
-/* // Booking save
 func (s *Server) saveBookingByEventId(w http.ResponseWriter, r *http.Request) {
-	if err := r.ParseForm(); err != nil {
-		log.Fatalln("parsing Error")
-	}
-
+	ParseFormData(r)
 	var form storage.Booking
 	if err := s.decoder.Decode(&form, r.PostForm); err != nil {
 		log.Fatalln("Booking Page Decoding Error")
 	}
-
-	id := r.FormValue("id")
-	if id == "" {
-		log.Println("Not found.")
-	}
-
-	fmt.Println("133 number line = ", id)
-	et, err := s.store.GetDataById(id)
-	fmt.Println(et)
-
-	// total ticket price = ticket price *number of ticket
-	form.TotalAmount = form.NumberOfTicket * et.PerPersonPrice
+	id := form.EventId
+	t := IntToStringConversion(id)
+	_, err := s.store.GetDataById(t)
 	form.UserId = 1
-
-	// decrement value as user's input
-	_, err = s.store.DecrementRemainingTicketById(form.EventId, form.NumberOfTicket)
-
+	_, err = s.store.DecrementRemainingTicketById(form.EventId, form.NumberOfTicket) // decrement value as user's input
 	// validation
 	if err := form.Validate(); err != nil {
 		vErrs := map[string]string{}
@@ -190,21 +139,15 @@ func (s *Server) saveBookingByEventId(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		}
-
 		data := BookingFormData{
 			CSRFField:  csrf.TemplateField(r),
 			Form:       form,
 			FormErrors: vErrs,
 		}
-		s.loadBookingTemplate(w, r, data)
+		s.loadBookingTemplateByEventId(w, r, data,t)
 		return
 	}
-	fmt.Println("83 line pass")
 	_, err = s.store.CreateBooking(form)
-	fmt.Println("85 line pass")
-	if err != nil {
-		log.Fatalln("Unable to find Booking form ", err)
-	}
-
+	UnableToGetData(err)
 	http.Redirect(w, r, "/booking/boucher", http.StatusSeeOther)
-} */
+}

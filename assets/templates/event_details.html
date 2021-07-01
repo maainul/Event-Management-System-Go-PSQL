@@ -7,7 +7,6 @@
 <body>
 <h1>Event Deatils </h1>
 
-<h2>
     <h3>Event Date : {{.EventDate}}</h3>
     <h3>Event Name : {{.EventName}}</h3>
     <h3>EventStart Time : {{.EventStartTime}}</h3>
@@ -18,7 +17,7 @@
     <h3>Speaker Name : {{.SpeakerFirstName}}  {{.SpeakerLastName}}</h3>
     <h3 id="demo"></h3>
     <h2> Ticket Remaining : {{.TicketRemaining}}</h2>
-    <a href="/booking/create/show?id={{.ID}}" >Book event</a>
+    <a href="/booking/show?id={{.ID}}">Book event</a>
 
 <script>
     if ({{.Status}} == true) {

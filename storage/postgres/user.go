@@ -60,3 +60,14 @@ func (s *Storage) GetUserEmailAndPass(email, password string) *storage.User {
 	fmt.Print("Get email and pass  = ", user)
 	return &user
 }
+
+const userQuery = `SELECT * FROM users WHERE email=$1`
+
+func (s *Storage) GetUserInfo(email string) *storage.User {
+	user := storage.User{}
+	err := s.db.Get(&user, userQuery, email)
+	if err != nil {
+		return &user
+	}
+	return &user
+}

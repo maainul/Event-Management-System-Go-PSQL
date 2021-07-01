@@ -52,9 +52,6 @@ func (s *Server) saveUser(w http.ResponseWriter, r *http.Request) {
 	if err := s.decoder.Decode(&creds, r.PostForm); err != nil {
 		log.Fatalln("Decoding error")
 	}
-	// Salt and hash the password using the bcrypt algorithm
-	// The second argument is the cost of hashing, which we arbitrarily set as 8 (this value can be more or less, depending on the computing power you wish to utilize)
-	// validation
 	if err := creds.Validate(); err != nil {
 		vErrs := map[string]string{}
 		if e, ok := err.(validation.Errors); ok {
@@ -64,7 +61,6 @@ func (s *Server) saveUser(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		}
-
 		data := UserFormData{
 			CSRFField:  csrf.TemplateField(r),
 			Form:       creds,
@@ -73,6 +69,10 @@ func (s *Server) saveUser(w http.ResponseWriter, r *http.Request) {
 		s.loadUserTemplate(w, r, data)
 		return
 	}
+	// Salt and hash the password using the bcrypt algorithm
+	// The second argument is the cost of hashing, which we arbitrarily set as 8
+	// (this value can be more or less, depending on the computing power you wish to utilize)
+	// validation
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(creds.Password), 8)
 	creds.Password = string(hashedPassword)
 	_, err = s.store.CreateUser(creds)

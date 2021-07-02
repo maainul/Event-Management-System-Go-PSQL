@@ -2,6 +2,7 @@ package handler
 
 import (
 	"Event-Management-System-Go-PSQL/storage"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -22,7 +23,6 @@ func DecodeFormData(s *Server, form storage.Booking, r *http.Request) {
 		log.Fatalln("Form Decoding Error")
 	}
 }
-
 
 // Unable to find data
 func UnableToGetData(err error) {
@@ -58,4 +58,13 @@ func ExcutionTemplateError(err error) {
 		log.Println("Error executing tempalte : ", err)
 		return
 	}
+}
+
+/*--------------------------------------------------------Booking Information/ Boucher/Invoice of Booking---------------------------------------------*/
+
+func InterfaceConversion(val interface{}) string {
+	iAreaId := val.(string)
+	iAreaId, _ = val.(string)
+	fmt.Println("converison id", iAreaId)
+	return iAreaId
 }

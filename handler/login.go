@@ -110,7 +110,7 @@ func LoginRedirect(isAdmin bool, w http.ResponseWriter, r *http.Request) {
 	if isAdmin == true {
 		http.Redirect(w, r, "/auth/admin-home", http.StatusSeeOther)
 	} else {
-		http.Redirect(w, r, "/booking/boucher", http.StatusSeeOther)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 
 	}
 }

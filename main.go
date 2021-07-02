@@ -25,7 +25,7 @@ func main() {
 	session := sessions.NewCookieStore([]byte("1234"))
 	r, err := handler.NewServer(store, decoder, session)
 	if err != nil {
-		log.Fatal("Handler not Found")
+		log.Fatal("Handler not Found -28 main.go")
 	}
 
 	srv := &http.Server{

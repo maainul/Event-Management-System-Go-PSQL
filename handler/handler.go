@@ -3,7 +3,9 @@ package handler
 import (
 	"Event-Management-System-Go-PSQL/storage/postgres"
 	"html/template"
+	"log"
 	"net/http"
+	"time"
 
 	"github.com/Masterminds/sprig"
 	"github.com/gorilla/csrf"
@@ -92,7 +94,7 @@ func NewServer(st *postgres.Storage, decoder *schema.Decoder, session *sessions.
 	ar.HandleFunc("/auth/event", s.authGetEvents).Methods("GET")
 	ar.HandleFunc("/auth/event/create", s.createEvent).Methods("GET")
 	ar.HandleFunc("/auth/event/create", s.saveEvent).Methods("Post")
-    ar.HandleFunc("/auth/event/show", s.eventDetails).Methods("GET")
+	ar.HandleFunc("/auth/event/show", s.eventDetails).Methods("GET")
 
 	/* Feedback Handlers */
 	ar.HandleFunc("/auth/feedback", s.getFeedback).Methods("GET")
@@ -118,6 +120,17 @@ func (s *Server) parseTemplates() error {
 			}
 			return string(runes[n:])
 		},
+
+		"dateConv": func(str string) string {
+			layout := "2006-01-02T15:04:05Z"
+			s := str
+			t, err := time.Parse(s, layout)
+			if err != nil {
+				log.Println(err)
+			}
+
+			return t.String()
+		},
 	}).Funcs(sprig.FuncMap())
 
 	tmpl, err := templates.ParseGlob("assets/templates/*.html")
@@ -128,6 +141,15 @@ func (s *Server) parseTemplates() error {
 	return nil
 }
 
+/* func (s *Server) parseTemplates() error {
+	templates := template.New("templates").Funcs(sprig.FuncMap())
+	tmpl, err := templates.ParseGlob("assets/templates/*.html")
+	if err != nil {
+		return err
+	}
+	s.templates = tmpl
+	return nil
+} */
 /*------------------------------------------------ADMIN AUTHENTICATION MIDDLEWARE-----------------------------------*/
 func (s *Server) adminAuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -144,12 +166,17 @@ func (s *Server) userAuthMiddleware(next http.Handler) http.Handler {
 
 /*------------------------------------------------Session Information Checker ----------------------------------*/
 func SessionCheckAndRedirect(s *Server, r *http.Request, next http.Handler, w http.ResponseWriter, user bool) {
-	session, _ := s.session.Get(r, "event_management_app")
-	uid := session.Values["user_id"]
-	user_type := session.Values["is_admin"]
+	uid, user_type := GetSetSessionValue(s, r)
 	if uid != "" && user_type == user {
 		next.ServeHTTP(w, r)
 	} else {
 		http.Redirect(w, r, "/forbidden", http.StatusSeeOther)
 	}
+}
+
+func GetSetSessionValue(s *Server, r *http.Request) (interface{}, interface{}) {
+	session, _ := s.session.Get(r, "event_management_app")
+	uid := session.Values["user_id"]
+	user_type := session.Values["is_admin"]
+	return uid, user_type
 }

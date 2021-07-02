@@ -2,11 +2,9 @@ package handler
 
 import (
 	"Event-Management-System-Go-PSQL/storage"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
-	"strconv"
 
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/gorilla/csrf"
@@ -56,15 +54,17 @@ func (s *Server) saveBookingByEventId(w http.ResponseWriter, r *http.Request) {
 	id := form.EventId
 	t := IntToStringConversion(id)
 	result, err := s.store.GetDataById(t)
-
-	uid, _ := GetSetSessionValue(s, r)
-	fmt.Println("UID FROM BOoking = ", uid)
-	toInt := InterfaceConversion(uid)
-	intVar, err := strconv.Atoi(toInt)
+	intVar := SessionUserId(s, r)
 	form.UserId = int32(intVar)
+	if form.NumberOfTicket > result.TicketRemaining {
+		log.Println("Input Ticket is More than Remaining Ticket")
+		http.Redirect(w, r, r.Header.Get("Referer"), 302)
+	}
 	ticket_price := result.PerPersonPrice * form.NumberOfTicket
 	form.TotalAmount = ticket_price
+
 	_, err = s.store.DecrementRemainingTicketById(form.EventId, form.NumberOfTicket) // decrement value as user's input
+
 	// validation
 	if err := form.Validate(); err != nil {
 		vErrs := map[string]string{}

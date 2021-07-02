@@ -103,6 +103,7 @@ const startTimeIsRequired = "Start Time is Required"
 const endTimeIsRequired = "End Time is Required"
 const numberOfGuestIsRequired = "Number of Guest is Required"
 const perPersonIsRequired = "Number of Guest is Required"
+const numberOfTicket = "Ticket Number is Required"
 const addressIsRequired = "Address is Required"
 
 // User validation
@@ -219,8 +220,7 @@ func (a Feedback) Validate() error {
 func (a Booking) Validate() error {
 	return validation.ValidateStruct(&a,
 		validation.Field(&a.NumberOfTicket,
-			validation.Required.Error(firstNameRequired),
-			// validation.Length(5, 30).Error(nameLength),
+			validation.Required.Error(numberOfTicket),
 		),
 	)
 }

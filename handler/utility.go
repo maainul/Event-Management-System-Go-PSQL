@@ -2,7 +2,6 @@ package handler
 
 import (
 	"Event-Management-System-Go-PSQL/storage"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -65,6 +64,15 @@ func ExcutionTemplateError(err error) {
 func InterfaceConversion(val interface{}) string {
 	iAreaId := val.(string)
 	iAreaId, _ = val.(string)
-	fmt.Println("converison id", iAreaId)
 	return iAreaId
+}
+
+func SessionUserId(s *Server, r *http.Request) int32 {
+	uid, _ := GetSetSessionValue(s, r)
+	toInt := InterfaceConversion(uid)
+	intVar, err := strconv.Atoi(toInt)
+	if err != nil {
+		log.Println("Interface conversion error")
+	}
+	return int32(intVar)
 }

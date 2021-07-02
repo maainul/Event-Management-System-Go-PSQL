@@ -3,9 +3,7 @@ package handler
 import (
 	"Event-Management-System-Go-PSQL/storage/postgres"
 	"html/template"
-	"log"
 	"net/http"
-	"time"
 
 	"github.com/Masterminds/sprig"
 	"github.com/gorilla/csrf"
@@ -110,29 +108,7 @@ func NewServer(st *postgres.Storage, decoder *schema.Decoder, session *sessions.
 }
 
 func (s *Server) parseTemplates() error {
-	templates := template.New("templates").Funcs(template.FuncMap{
-		"strrev": func(str string) string {
-			n := len(str)
-			runes := make([]rune, n)
-			for _, rune := range str {
-				n--
-				runes[n] = rune
-			}
-			return string(runes[n:])
-		},
-
-		"dateConv": func(str string) string {
-			layout := "2006-01-02T15:04:05Z"
-			s := str
-			t, err := time.Parse(s, layout)
-			if err != nil {
-				log.Println(err)
-			}
-
-			return t.String()
-		},
-	}).Funcs(sprig.FuncMap())
-
+	templates := template.New("templates").Funcs(sprig.FuncMap())
 	tmpl, err := templates.ParseGlob("assets/templates/*.html")
 	if err != nil {
 		return err
@@ -141,15 +117,6 @@ func (s *Server) parseTemplates() error {
 	return nil
 }
 
-/* func (s *Server) parseTemplates() error {
-	templates := template.New("templates").Funcs(sprig.FuncMap())
-	tmpl, err := templates.ParseGlob("assets/templates/*.html")
-	if err != nil {
-		return err
-	}
-	s.templates = tmpl
-	return nil
-} */
 /*------------------------------------------------ADMIN AUTHENTICATION MIDDLEWARE-----------------------------------*/
 func (s *Server) adminAuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

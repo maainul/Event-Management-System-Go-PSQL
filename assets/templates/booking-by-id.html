@@ -3,6 +3,8 @@
 <body>
 
 <h2>HTML Forms for booking</h2>
+     
+    <h3> Ticket Remaining = {{.SingleEvent.TicketRemaining}} </h3><br>   
 
 <form action="/booking/show/create"  method="post">
      {{.CSRFField}}
@@ -14,12 +16,12 @@
 
     <label for="ID">Per Person Price</label><br>
     <input type="text" id="per_person_price"value="{{.SingleEvent.PerPersonPrice}}" ><br>    
-    
+  
     <input type="hidden" value="{{.SingleEvent.ID}}" name="EventId"><br>
 
     <label name="NumberOfTicket">Number Of Ticket:</label><br>
 
-    <input id= "ticket_number" type="text" name="NumberOfTicket" oninput="sum()" required="required"><br>
+    <input id= "ticket_number" type="number" name="NumberOfTicket" oninput="sum()" required="required" max = {{.SingleEvent.TicketRemaining}}><br>
 
     <label name="TotalAmount">Total Calculated Amount:</label><br>
 

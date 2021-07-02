@@ -4,7 +4,7 @@ SELECT 'up SQL query';
 -- +goose StatementEnd
 CREATE TABLE IF NOT EXISTS booking(
     "id"                    serial,
-    "event_id" 			    INT DEFAULT NULL,
+    "event_id" 			        INT DEFAULT NULL,
     "user_id"               INT DEFAULT NULL,
     "number_of_ticket"      INT,
     "total_amount"          INT,

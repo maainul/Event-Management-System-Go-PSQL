@@ -59,7 +59,6 @@ func (s *Server) saveSpeaker(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		}
-
 		data := SpeakerFormData{
 			CSRFField:  csrf.TemplateField(r),
 			Form:       form,

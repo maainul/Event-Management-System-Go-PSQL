@@ -20,8 +20,14 @@ func (s *Storage) GetFeedback() ([]storage.Feedback, error) {
 }
 
 const createFeedback = `
-		INSERT INTO feedback(message)
-		VALUES (:message)
+		INSERT INTO feedback(
+			message,
+			user_id
+		)
+		VALUES (
+			:message,
+			:user_id
+		)
 		RETURNING id
 		`
 

@@ -52,7 +52,6 @@ func (s *Server) saveEventType(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatalln("Form Decoding Error")
 	}
-
 	// validation
 	if err := form.Validate(); err != nil {
 		vErrs := map[string]string{}

@@ -49,8 +49,8 @@ func (s *Server) saveFeedback(w http.ResponseWriter, r *http.Request) {
 	if err := s.decoder.Decode(&form, r.PostForm); err != nil {
 		log.Fatalln("Decoding error")
 	}
-	// uid := session.Values["user_id"]
-	form.UserId = 1
+	intVar := SessionUserId(s, r)
+	form.UserId = int32(intVar)
 	// validation
 	if err := form.Validate(); err != nil {
 		vErrs := map[string]string{}
@@ -71,7 +71,7 @@ func (s *Server) saveFeedback(w http.ResponseWriter, r *http.Request) {
 	}
 	_, err := s.store.CreateFeedback(form)
 	UnableToInsertData(err)
-	http.Redirect(w, r, "/feedback", http.StatusSeeOther)
+	http.Redirect(w, r, "/event", http.StatusSeeOther)
 }
 
 func (s *Server) loadFeedbackTemplate(w http.ResponseWriter, r *http.Request, form FeedbackFormData) {

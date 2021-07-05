@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+}
+
+li {
+  float: left;
+}
+
+li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+li a:hover:not(.active) {
+  background-color: #111;
+}
+
+.active {
+  background-color: #04AA6D;
+}
+// ----------------------Table CSS--------------
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+<body>
+
+  <h2>HTML Forms Add Speaker</h2>
+
+  <form action="/auth/speaker/create" method="Post">
+
+  <input  name="id" type="hidden" value="{{.ID}}">
+
+    <label for="first_name" name="first_name">First name:</label><br>
+    <input type="text" id="firt_name" name="FirstName" value={{.FirstName}}><br>
+   
+    <label for="first_name" name="first_name">Last Name:</label><br>
+    <input type="text" id="last_name" name="LastName" value={{.LastName}}><br>
+   
+   
+    <label for="first_name" name="first_name">Phone:</label><br>
+    <input type="text" id="phone" name="Phone" value={{.Phone}}><br>
+   
+    <label for="first_name" name="first_name">Username:</label><br>
+    <input type="text" id="address" name="Username" value={{.Username}}><br>
+    
+    <label for="first_name" name="first_name">Email:</label><br>
+    <input type="text" id="user_name" name="Email" value={{.Email}}><br>
+   
+    <label for="first_name" name="first_name">Address:</label><br>
+    <input type="text" id="email" name="Address" value={{.Address}}><br>
+   
+
+    <input type="submit" value="Submit">
+  </form> 
+
+</body>
+</html>

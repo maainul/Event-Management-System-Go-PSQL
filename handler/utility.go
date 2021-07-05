@@ -76,3 +76,11 @@ func SessionUserId(s *Server, r *http.Request) int32 {
 	}
 	return int32(intVar)
 }
+
+/*--------------------------------------------------------User id not found---------------------------------------------*/
+
+func UserIdNotFound(id string) {
+	if id == "" {
+		log.Println("Not found")
+	}
+}

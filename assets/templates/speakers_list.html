@@ -1,21 +1,86 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/static/css/app.min.css" />
-    <title>Home</title>
-    
-    {{range .Speakers}}
-        
-          <p>{{.FirstName}}  - {{.LastName}} - {{.Phone}} -{{.Username}}-{{.Email}}-{{.Address}}</p>
+<html>
+<head>
+<style>
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+}
 
-    {{end}}
+li {
+  float: left;
+}
 
-  
-  </head>
-  <body>
-       
-  </body>
+li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+li a:hover:not(.active) {
+  background-color: #111;
+}
+
+.active {
+  background-color: #04AA6D;
+}
+// ----------------------Table CSS--------------
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+</head>
+<body>
+
+<ul>
+  <li><a href="#home">Home</a></li>
+  <li><a href="/event">Event</a></li>
+  <li><a href="/event-type">Event-Type</a></li>
+  <li><a href="/user/create">User Registration</a></li>
+  <li><a href="/speaker">Speaker List</a></li>
+  <li style="float:right"><a class="active" href="/login">Login</a></li>
+  <li style="float:right"><a class="active" href="/logout">Logout</a></li>
+</ul>
+
+<h2>Speaker List Table</h2>
+<table>
+<tr>
+      <th>First Name</th>
+      <th>Last Name</th>
+      <th>Phone</th>
+      <th>User Name</th>
+      <th>View</th>
+      <th>Update</th>
+  </tr>
+  {{range .Speakers}}
+    <tr>
+      <td>{{.FirstName}}</td>
+      <td>{{.LastName}}</td>
+      <td>{{.Phone}}</td>
+      <td>{{.Username}}</td>
+      <td><a href="/auth/speaker/update?id={{.ID}}">View</a><td/>
+      <td><a href="/auth/speaker/update?id={{.ID}}">Update</a><td/>
+      </tr>
+      {{end}}
+</table>
+
+</body>
+
 </html>

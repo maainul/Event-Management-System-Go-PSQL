@@ -120,9 +120,7 @@ func (s *Server) loadCreateEventTemplate(w http.ResponseWriter, r *http.Request,
 
 func (s *Server) eventDetails(w http.ResponseWriter, r *http.Request) {
 	id := r.FormValue("id")
-	if id == "" {
-		log.Println("Not found")
-	}
+	UserIdNotFound(id)
 	tmp := s.templates.Lookup("event_details.html")
 	UnableToFindHtmlTemplate(tmp)
 	et, err := s.store.GetDataById(id)

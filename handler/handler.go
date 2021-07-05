@@ -55,7 +55,7 @@ func NewServer(st *postgres.Storage, decoder *schema.Decoder, session *sessions.
 
 	/* Event Handlers User */
 	r.HandleFunc("/event", s.getEvents).Methods("GET")
-	r.HandleFunc("/", s.getEvents).Methods("GET")
+	r.HandleFunc("/", s.home).Methods("GET")
 	r.HandleFunc("/event/show", s.eventDetails).Methods("GET")
 
 	/* Event Type Handlers User */
@@ -103,6 +103,8 @@ func NewServer(st *postgres.Storage, decoder *schema.Decoder, session *sessions.
 	/* Speaker Handler */
 	ar.HandleFunc("/auth/speaker/create", s.createSpeaker).Methods("GET")
 	ar.HandleFunc("/auth/speaker/create", s.saveSpeaker).Methods("POST")
+	ar.HandleFunc("/auth/speaker/update", s.updateSpeakerForm).Methods("GET")
+	//	ar.HandleFunc("/auth/speaker/update", s.updateSpeaker).Methods("POST")
 
 	return r, nil
 }

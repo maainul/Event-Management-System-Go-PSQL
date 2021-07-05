@@ -5,16 +5,13 @@
 ## Admin Functionality :
 
     1. Admin login
-    2. Amin will create Event Type.Event type eg(Marriage, Dance Show etc)
+    2. Amin will create Event Type.Event type 
     3. Admin can see event list, update and delete event list(CRUD of EVENT list)
     4. It allows the user to select from a list of event types. 
     5. Add Venue
     6. New Booking with status
     7. can change staus
     
-
-    
-
 ## User Functionality:
 
     1. User Can login
@@ -25,47 +22,17 @@
     6. User can see their event list
     4. User Can Add  user to select the date and time of event, place and the event equipment’s.
     5.  user is given a receipt number for his booking.
-    6. Equipement 
-    7. Decoration
 
-    
+# Database Tables
 
-# 
+users
 
+events
 
-Singup Page
+event-type
 
-Login
+feedback
 
-Feedback
+speaker
 
-Buy Ticket
-# Events Functionality
-
-
-Date wise Events
-
-total events
-
-total events today (Datewise events)
-
-total attends and total set not booked --- Eventwise
-
-this year total events 
-
-// this month total events
-
-// this year attended person
-
-// this year income
-
-// this year not booked seat
-
-# Speakers
-
-this year attend events
-
-numbe of speakers
-
-event type wise speaker
-
+booking
